@@ -1,425 +1,279 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="color-scheme" content="light dark" />
-  <meta name="theme-color" content="#f2f0e9" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#111412" media="(prefers-color-scheme: dark)" />
-  <link rel="icon" href="data:," />
-  <title>刘杨 · 计算机技术 / AI</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      color-scheme: light dark;
-      --bg: #f2f0e9;
-      --paper: #fbfaf6;
-      --ink: #17201b;
-      --muted: #526058;
-      --line: #c8cec8;
-      --soft: #e5e8e1;
-      --accent: #d4522c;
-      --accent-ink: #8f2f15;
-      --green: #1f684b;
-      --code: #202923;
-      --code-ink: #d9e8dd;
-      --shadow: 0 18px 60px rgba(25, 35, 28, .09);
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #111412;
-        --paper: #171c18;
-        --ink: #edf2ed;
-        --muted: #aab5ad;
-        --line: #39423c;
-        --soft: #212922;
-        --accent: #f2774f;
-        --accent-ink: #ff9b7a;
-        --green: #77c8a5;
-        --code: #0b0e0c;
-        --code-ink: #d9e8dd;
-        --shadow: 0 20px 70px rgba(0, 0, 0, .24);
-      }
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: "Noto Sans SC", sans-serif;
-      line-height: 1.7;
-      -webkit-font-smoothing: antialiased;
-    }
-    a { color: inherit; }
-    button { font: inherit; }
-    ::selection { background: var(--accent); color: #fff; }
-    .shell {
-      width: min(1180px, calc(100% - 40px));
-      margin: 0 auto;
-    }
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      display: flex;
-      justify-content: flex-end;
-      padding: max(16px, env(safe-area-inset-top)) 0 12px;
-      background: linear-gradient(var(--bg) 70%, transparent);
-    }
-    .nav {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 5px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--paper) 92%, transparent);
-      box-shadow: 0 8px 24px rgba(0,0,0,.06);
-    }
-    .nav a {
-      text-decoration: none;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 600;
-      padding: 7px 12px;
-      border-radius: 999px;
-    }
-    .nav a:hover, .nav a:focus-visible { color: var(--ink); background: var(--soft); outline: none; }
-    .hero {
-      min-height: 76vh;
-      display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(320px, .65fr);
-      gap: clamp(48px, 8vw, 110px);
-      align-items: center;
-      padding: 64px 0 100px;
-    }
-    .hero-kicker {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 0 0 24px;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--green);
-    }
-    .hero-kicker::before { content: ""; width: 38px; height: 2px; background: currentColor; }
-    h1 {
-      max-width: 780px;
-      margin: 0;
-      font-size: clamp(56px, 10vw, 126px);
-      line-height: .92;
-      letter-spacing: -.07em;
-      font-weight: 800;
-    }
-    h1 .outline {
-      color: transparent;
-      -webkit-text-stroke: 1.5px var(--ink);
-    }
-    .hero-copy {
-      max-width: 640px;
-      margin: 36px 0 0;
-      font-size: clamp(17px, 2vw, 21px);
-      color: var(--muted);
-    }
-    .hero-copy strong { color: var(--ink); font-weight: 700; }
-    .status-panel {
-      position: relative;
-      padding: 34px 30px 30px;
-      background: var(--code);
-      color: var(--code-ink);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-    .status-panel::after {
-      content: "";
-      position: absolute;
-      width: 150px;
-      height: 150px;
-      right: -70px;
-      bottom: -70px;
-      border: 24px solid var(--accent);
-      border-radius: 50%;
-      opacity: .9;
-    }
-    .status-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 18px;
-      border-bottom: 1px solid #445048;
-      font: 500 12px/1.4 "IBM Plex Mono", monospace;
-      color: #91a096;
-    }
-    .pulse { display: flex; align-items: center; gap: 8px; color: #8ce0b7; }
-    .pulse::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #67d9a4;
-      box-shadow: 0 0 0 5px rgba(103,217,164,.12);
-    }
-    .status-list { list-style: none; padding: 12px 0 0; margin: 0; }
-    .status-list li { display: grid; grid-template-columns: 70px 1fr; gap: 14px; padding: 12px 0; }
-    .status-list span { font: 500 11px/1.6 "IBM Plex Mono", monospace; color: #8f9b93; }
-    .status-list b { font-size: 14px; font-weight: 500; color: #edf5ef; }
-    section { scroll-margin-top: 90px; }
-    .section {
-      border-top: 1px solid var(--line);
-      padding: 96px 0;
-    }
-    .section-grid {
-      display: grid;
-      grid-template-columns: minmax(180px, .42fr) minmax(0, 1fr);
-      gap: clamp(36px, 8vw, 110px);
-    }
-    .section-label {
-      margin: 0;
-      font: 600 13px/1.5 "IBM Plex Mono", monospace;
-      color: var(--accent-ink);
-    }
-    .section-label span { display: block; margin-top: 10px; color: var(--muted); font-weight: 400; }
-    h2 {
-      margin: -9px 0 28px;
-      font-size: clamp(34px, 5vw, 62px);
-      line-height: 1.08;
-      letter-spacing: -.045em;
-    }
-    .lead { margin: 0; max-width: 760px; font-size: clamp(18px, 2.1vw, 24px); line-height: 1.7; color: var(--muted); }
-    .lead strong { color: var(--ink); }
-    .focus-list { display: grid; margin-top: 58px; border-top: 1px solid var(--line); }
-    .focus-row {
-      display: grid;
-      grid-template-columns: 70px minmax(140px, .65fr) 1fr;
-      gap: 24px;
-      align-items: baseline;
-      padding: 24px 0;
-      border-bottom: 1px solid var(--line);
-    }
-    .focus-row .num { font: 500 12px "IBM Plex Mono", monospace; color: var(--accent-ink); }
-    .focus-row h3 { margin: 0; font-size: 19px; }
-    .focus-row p { margin: 0; color: var(--muted); font-size: 15px; }
-    .project {
-      display: grid;
-      grid-template-columns: 1.15fr .85fr;
-      background: var(--paper);
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow);
-    }
-    .project-copy { padding: clamp(28px, 5vw, 58px); }
-    .project-tag { font: 600 11px "IBM Plex Mono", monospace; color: var(--accent-ink); }
-    .project h3 { margin: 18px 0 18px; font-size: clamp(27px, 4vw, 42px); line-height: 1.15; letter-spacing: -.03em; }
-    .project p { color: var(--muted); margin: 0; }
-    .stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 30px; }
-    .stack span { padding: 7px 10px; background: var(--soft); font: 500 11px "IBM Plex Mono", monospace; color: var(--ink); }
-    .project-visual {
-      display: grid;
-      place-items: center;
-      min-height: 360px;
-      padding: 34px;
-      background: var(--code);
-      overflow: hidden;
-    }
-    .music-ui { width: min(100%, 320px); color: var(--code-ink); }
-    .album {
-      width: 150px;
-      aspect-ratio: 1;
-      margin: 0 auto 35px;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at center, var(--accent) 0 6px, #111 7px 18px, #303a33 19px 38px, #121713 39px 59px, #445048 60px 61px, #0b0e0c 62px);
-      box-shadow: 0 20px 50px rgba(0,0,0,.35);
-    }
-    .track-line { height: 3px; background: #49554d; position: relative; }
-    .track-line::before { content: ""; position: absolute; inset: 0 38% 0 0; background: var(--accent); }
-    .music-meta { display: flex; justify-content: space-between; margin-top: 12px; font: 500 11px "IBM Plex Mono", monospace; color: #a8b6ad; }
-    .skills-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 60px; }
-    .skill-group { padding: 24px 0; border-bottom: 1px solid var(--line); }
-    .skill-group h3 { margin: 0 0 12px; font-size: 14px; color: var(--accent-ink); }
-    .skill-group p { margin: 0; font: 500 14px/2 "IBM Plex Mono", monospace; color: var(--ink); }
-    .closing {
-      display: grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 48px;
-      align-items: end;
-      padding: 100px 0 calc(76px + env(safe-area-inset-bottom));
-      border-top: 1px solid var(--line);
-    }
-    .closing h2 { margin-bottom: 18px; }
-    .closing p { max-width: 610px; color: var(--muted); margin: 0; }
-    .contact { justify-self: end; text-align: right; }
-    .contact-label { display: block; margin-bottom: 12px; font: 500 11px "IBM Plex Mono", monospace; color: var(--muted); }
-    .copy-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 15px;
-      border: 1px solid var(--ink);
-      border-radius: 0;
-      background: transparent;
-      color: var(--ink);
-      cursor: pointer;
-      font: 600 13px "IBM Plex Mono", monospace;
-    }
-    .copy-btn:hover, .copy-btn:focus-visible { background: var(--ink); color: var(--bg); outline: none; }
-    .copy-btn svg { width: 15px; height: 15px; }
-    .copy-note { min-height: 22px; margin: 8px 0 0; font-size: 12px; color: var(--green); }
-    @media (max-width: 760px) {
-      .shell { width: min(100% - 28px, 680px); }
-      .topbar { justify-content: center; }
-      .nav { width: 100%; justify-content: space-between; overflow: hidden; }
-      .nav a { padding: 7px 9px; font-size: 12px; }
-      .hero { min-height: auto; grid-template-columns: 1fr; gap: 52px; padding: 58px 0 78px; }
-      h1 { font-size: clamp(58px, 20vw, 94px); }
-      .hero-copy { margin-top: 28px; }
-      .status-panel { padding: 26px 22px; }
-      .section { padding: 74px 0; }
-      .section-grid { grid-template-columns: 1fr; gap: 30px; }
-      .section-label span { display: inline; margin: 0 0 0 8px; }
-      h2 { margin-top: 0; }
-      .focus-list { margin-top: 42px; }
-      .focus-row { grid-template-columns: 42px 1fr; gap: 10px 12px; }
-      .focus-row p { grid-column: 2; }
-      .project { grid-template-columns: 1fr; }
-      .project-visual { min-height: 300px; order: -1; }
-      .skills-layout { grid-template-columns: 1fr; gap: 0; }
-      .closing { grid-template-columns: 1fr; align-items: start; padding-top: 76px; }
-      .contact { justify-self: start; text-align: left; }
-    }
-    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>慢下来 · 治愈小站</title>
+<meta name="description" content="一个让人慢下来的角落：治愈音乐，呼吸练习，什么都不用做。" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    color: #4a4458;
+    overflow: hidden;
+    background: linear-gradient(160deg, #fde8d8 0%, #f9dcc4 22%, #e8d8f0 55%, #cfd8f5 80%, #bcd4f0 100%);
+    background-size: 300% 300%;
+    animation: skyDrift 40s ease-in-out infinite alternate;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @keyframes skyDrift {
+    0% { background-position: 0% 20%; }
+    100% { background-position: 100% 80%; }
+  }
+  #clouds { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .cloud {
+    position: absolute; border-radius: 999px;
+    background: rgba(255,255,255,.55);
+    filter: blur(28px);
+    animation: float linear infinite;
+  }
+  @keyframes float {
+    from { transform: translateX(-30vw); }
+    to { transform: translateX(130vw); }
+  }
+  .sun {
+    position: fixed; top: 12%; right: 14%; width: 120px; height: 120px; z-index: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,236,190,.95) 0%, rgba(255,214,150,.55) 45%, rgba(255,214,150,0) 70%);
+    animation: breathe 8s ease-in-out infinite;
+  }
+  main {
+    position: relative; z-index: 1; height: 100dvh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px; text-align: center;
+  }
+  .kicker {
+    font-size: 13px; letter-spacing: .5em; text-indent: .5em;
+    color: #8a7f9e; margin-bottom: 18px;
+  }
+  h1 {
+    font-size: clamp(44px, 10vw, 84px); font-weight: 600;
+    color: #3f3a52; letter-spacing: .12em; text-indent: .12em;
+    text-shadow: 0 2px 24px rgba(255,255,255,.6);
+    margin-bottom: 14px;
+  }
+  #quote {
+    min-height: 3.2em; max-width: 22em;
+    font-size: clamp(16px, 4.4vw, 21px); line-height: 1.9; color: #6b6284;
+    transition: opacity .8s ease;
+  }
+  /* 呼吸圈 */
+  #breathWrap { margin: 34px 0 8px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  #breathCircle {
+    width: 150px; height: 150px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.85), rgba(255,255,255,.25) 70%);
+    border: 1.5px solid rgba(255,255,255,.8);
+    box-shadow: 0 8px 40px rgba(150,140,200,.25), inset 0 0 30px rgba(255,255,255,.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; color: #7a7194; letter-spacing: .3em; text-indent: .3em;
+    transition: transform 4s ease-in-out;
+    cursor: pointer; user-select: none;
+  }
+  #breathHint { font-size: 12px; color: #9a92b3; letter-spacing: .2em; }
+  /* 播放器 */
+  #player {
+    position: fixed; left: 50%; transform: translateX(-50%);
+    bottom: calc(20px + env(safe-area-inset-bottom)); z-index: 2;
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,.55); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,.7); border-radius: 999px;
+    padding: 10px 18px 10px 10px;
+    box-shadow: 0 6px 28px rgba(120,110,160,.18);
+    max-width: calc(100vw - 40px);
+  }
+  #playBtn {
+    width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer; flex-shrink: 0;
+    background: linear-gradient(135deg, #c9a8e8, #9db8ec);
+    color: #fff; font-size: 17px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 14px rgba(150,130,200,.4);
+  }
+  #playBtn:active { transform: scale(.94); }
+  #trackMeta { text-align: left; min-width: 0; }
+  #trackName { font-size: 13px; color: #4a4458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 46vw; }
+  #trackState { font-size: 11px; color: #9a92b3; letter-spacing: .15em; }
+  #nextBtn {
+    border: none; background: none; cursor: pointer; font-size: 18px; color: #8a7f9e; padding: 6px; flex-shrink: 0;
+  }
+  #credit {
+    position: fixed; bottom: calc(76px + env(safe-area-inset-bottom)); z-index: 1;
+    width: 100%; text-align: center; font-size: 10.5px; color: rgba(120,110,150,.55); letter-spacing: .05em;
+    padding: 0 20px;
+  }
+  /* 入场遮罩 */
+  #enter {
+    position: fixed; inset: 0; z-index: 10;
+    background: linear-gradient(160deg, #fde8d8, #e8d8f0 60%, #cfd8f5);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+    transition: opacity 1.2s ease; padding: 24px; text-align: center;
+  }
+  #enter.hide { opacity: 0; pointer-events: none; }
+  #enter .leaf { font-size: 52px; animation: sway 3.5s ease-in-out infinite; }
+  @keyframes sway { 0%,100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
+  #enter p { color: #6b6284; font-size: 17px; line-height: 2; letter-spacing: .1em; }
+  #enterBtn {
+    border: none; cursor: pointer; font-size: 17px; letter-spacing: .35em; text-indent: .35em;
+    color: #fff; padding: 16px 44px; border-radius: 999px;
+    background: linear-gradient(135deg, #c9a8e8, #9db8ec);
+    box-shadow: 0 8px 30px rgba(150,130,200,.45);
+    transition: transform .2s;
+  }
+  #enterBtn:active { transform: scale(.96); }
+  #enter small { color: #9a92b3; font-size: 12px; letter-spacing: .2em; }
+</style>
 </head>
 <body>
-  <div class="shell">
-    <header class="topbar">
-      <nav class="nav" aria-label="页面导航">
-        <a href="#about">关于</a>
-        <a href="#focus">方向</a>
-        <a href="#work">项目</a>
-        <a href="#skills">技能</a>
-      </nav>
-    </header>
+<div class="sun"></div>
+<div id="clouds"></div>
 
-    <main>
-      <section class="hero" aria-labelledby="hero-title">
-        <div>
-          <p class="hero-kicker">COMPUTER SCIENCE · AI</p>
-          <h1 id="hero-title">刘杨<span class="outline">。</span></h1>
-          <p class="hero-copy">计算机技术硕士研究生，关注 <strong>AI、计算机视觉与智能体</strong>。一边写工程，一边把算法真正跑起来。</p>
-        </div>
-        <aside class="status-panel" aria-label="当前状态">
-          <div class="status-head"><span>PROFILE / 2026</span><span class="pulse">LEARNING</span></div>
-          <ul class="status-list">
-            <li><span>学校</span><b>榆林大学 · 信息工程学院</b></li>
-            <li><span>专业</span><b>计算机技术 · 硕士研究生</b></li>
-            <li><span>方向</span><b>AI / ML / CV / Agent</b></li>
-            <li><span>当前</span><b>Python 算法与 PyTorch</b></li>
-          </ul>
-        </aside>
-      </section>
-
-      <section class="section" id="about">
-        <div class="section-grid">
-          <p class="section-label">01 / ABOUT<span>关于我</span></p>
-          <div>
-            <h2>工程能力与研究能力，<br>我都想要。</h2>
-            <p class="lead">本科软件工程，现阶段继续向人工智能深入。喜欢把抽象概念落到可以运行、可以验证的代码里，也在持续训练自己的<strong>论文阅读、实验复现、项目开发与学术表达</strong>能力。</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="focus">
-        <div class="section-grid">
-          <p class="section-label">02 / FOCUS<span>关注方向</span></p>
-          <div>
-            <h2>从模型，到能解决问题的系统。</h2>
-            <div class="focus-list">
-              <article class="focus-row"><span class="num">01</span><h3>机器学习</h3><p>理解经典方法与评估思路，用 Python 复现并解释结果。</p></article>
-              <article class="focus-row"><span class="num">02</span><h3>计算机视觉</h3><p>关注视觉理解、深度学习方法及其在真实任务中的应用。</p></article>
-              <article class="focus-row"><span class="num">03</span><h3>大模型与 AI Agent</h3><p>探索工具调用、任务规划和多模态交互的工程实现。</p></article>
-              <article class="focus-row"><span class="num">04</span><h3>智能运动研究</h3><p>结合课题组方向，理解围棋、象棋等智力运动中的技术问题。</p></article>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="work">
-        <div class="section-grid">
-          <p class="section-label">03 / WORK<span>项目经历</span></p>
-          <article class="project">
-            <div class="project-copy">
-              <span class="project-tag">FULL-STACK / RECOMMENDATION</span>
-              <h3>在线音乐平台</h3>
-              <p>围绕音乐发现与播放体验完成的全栈项目，使用协同过滤实现个性化推荐，打通前端交互、后端服务与数据存储。</p>
-              <div class="stack" aria-label="项目技术栈"><span>Vue.js</span><span>Spring Boot</span><span>MyBatis</span><span>MySQL</span><span>协同过滤</span></div>
-            </div>
-            <div class="project-visual" aria-label="音乐播放界面抽象图">
-              <div class="music-ui" aria-hidden="true">
-                <div class="album"></div>
-                <div class="track-line"></div>
-                <div class="music-meta"><span>RECOMMENDATION_ENGINE</span><span>01:42</span></div>
-              </div>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section class="section" id="skills">
-        <div class="section-grid">
-          <p class="section-label">04 / STACK<span>技能图谱</span></p>
-          <div>
-            <h2>熟悉的工具，<br>正在拓宽的边界。</h2>
-            <div class="skills-layout">
-              <div class="skill-group"><h3>语言</h3><p>Java · Python · C</p></div>
-              <div class="skill-group"><h3>后端</h3><p>Spring Boot · MyBatis</p></div>
-              <div class="skill-group"><h3>前端</h3><p>Vue.js · HTML · CSS</p></div>
-              <div class="skill-group"><h3>数据</h3><p>MySQL · 推荐算法</p></div>
-              <div class="skill-group"><h3>正在学习</h3><p>PyTorch · 深度学习 · 算法实现</p></div>
-              <div class="skill-group"><h3>长期关注</h3><p>Computer Vision · LLM · AI Agent</p></div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="closing">
-      <div>
-        <h2>保持好奇，持续构建。</h2>
-        <p>把每天学到的东西，变成更清晰的理解和更扎实的作品。</p>
-      </div>
-      <div class="contact">
-        <span class="contact-label">GITHUB USERNAME</span>
-        <button class="copy-btn" type="button" id="copyGithub" aria-describedby="copyNote">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="1"/><path d="M16 8V4H4v12h4"/></svg>
-          <span>Huacishu0503</span>
-        </button>
-        <p class="copy-note" id="copyNote" role="status" aria-live="polite"></p>
-      </div>
-    </footer>
+<main>
+  <div class="kicker">治愈小站</div>
+  <h1>慢下来</h1>
+  <p id="quote">没关系，慢慢来。</p>
+  <div id="breathWrap">
+    <div id="breathCircle"><span id="breathText">呼吸</span></div>
+    <div id="breathHint">跟着圆圈 · 点我开始</div>
   </div>
+</main>
 
-  <script>
-    (function () {
-      var button = document.getElementById('copyGithub');
-      var note = document.getElementById('copyNote');
-      button.addEventListener('click', function () {
-        var text = 'Huacishu0503';
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(function () {
-            note.textContent = '已复制 GitHub 用户名';
-          }).catch(function () {
-            note.textContent = 'GitHub：' + text;
-          });
-        } else {
-          note.textContent = 'GitHub：' + text;
-        }
-        window.setTimeout(function () { note.textContent = ''; }, 2600);
-      });
-    })();
-  </script>
+<div id="credit">音乐：Placid Ambient / Spiritual Ambient · MusicLFiles（CC BY 4.0，via Wikimedia Commons）</div>
+
+<div id="player">
+  <button id="playBtn" aria-label="播放/暂停">▶</button>
+  <div id="trackMeta">
+    <div id="trackName">Placid Ambient</div>
+    <div id="trackState">未 播 放</div>
+  </div>
+  <button id="nextBtn" aria-label="下一首">⏭</button>
+</div>
+
+<audio id="audio" preload="auto" loop></audio>
+
+<div id="enter">
+  <div class="leaf">🌿</div>
+  <p>这里没什么要追的<br />进来坐一会儿吧</p>
+  <button id="enterBtn">进来坐坐</button>
+  <small>点一下 · 会有音乐</small>
+</div>
+
+<script>
+(function(){
+  // 云
+  var clouds = document.getElementById('clouds');
+  for (var i = 0; i < 7; i++) {
+    var c = document.createElement('div');
+    c.className = 'cloud';
+    var w = 120 + Math.random() * 220;
+    c.style.width = w + 'px';
+    c.style.height = (w * 0.42) + 'px';
+    c.style.top = (Math.random() * 70) + '%';
+    c.style.animationDuration = (60 + Math.random() * 80) + 's';
+    c.style.animationDelay = (-Math.random() * 80) + 's';
+    c.style.opacity = 0.35 + Math.random() * 0.35;
+    clouds.appendChild(c);
+  }
+
+  // 治愈文案轮播
+  var quotes = [
+    '没关系，慢慢来。',
+    '今天也辛苦了，先抱抱自己。',
+    '深呼吸，好运正在路上。',
+    '允许自己什么都不做一会儿。',
+    '你已经做得很好了，真的。',
+    '难过的时候，就看看云。',
+    '生活偶尔苦，但你很甜。',
+    '放过自己，是今天最重要的事。'
+  ];
+  var qi = 0, qEl = document.getElementById('quote');
+  setInterval(function(){
+    qEl.style.opacity = 0;
+    setTimeout(function(){
+      qi = (qi + 1) % quotes.length;
+      qEl.textContent = quotes[qi];
+      qEl.style.opacity = 1;
+    }, 800);
+  }, 6000);
+
+  // 音乐
+  var tracks = [
+    { name: 'Placid Ambient', file: 'placid_ambient' },
+    { name: 'Spiritual Ambient', file: 'spiritual_ambient' }
+  ];
+  var ti = 0;
+  var audio = document.getElementById('audio');
+  var playBtn = document.getElementById('playBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var trackName = document.getElementById('trackName');
+  var trackState = document.getElementById('trackState');
+
+  function loadTrack(i, autoplay) {
+    ti = (i + tracks.length) % tracks.length;
+    var t = tracks[ti];
+    // 先清空再设，避免残留
+    while (audio.firstChild) audio.removeChild(audio.firstChild);
+    var s1 = document.createElement('source');
+    s1.src = t.file + '.mp3'; s1.type = 'audio/mpeg';
+    audio.appendChild(s1);
+    trackName.textContent = t.name;
+    audio.load();
+    if (autoplay) play();
+  }
+  function play() {
+    audio.play().then(function(){
+      playBtn.textContent = '⏸';
+      trackState.textContent = '播 放 中 ♪';
+    }).catch(function(){ trackState.textContent = '点 击 播 放'; });
+  }
+  function pause() {
+    audio.pause();
+    playBtn.textContent = '▶';
+    trackState.textContent = '已 暂 停';
+  }
+  playBtn.addEventListener('click', function(){
+    if (audio.paused) { if (!audio.currentSrc) loadTrack(ti, true); else play(); }
+    else pause();
+  });
+  nextBtn.addEventListener('click', function(){ loadTrack(ti + 1, !audio.paused || !audio.currentSrc); });
+  audio.addEventListener('ended', function(){ /* loop 属性已处理单曲循环 */ });
+
+  // 呼吸练习：4 秒吸气 - 4 秒呼气
+  var breathCircle = document.getElementById('breathCircle');
+  var breathText = document.getElementById('breathText');
+  var breathHint = document.getElementById('breathHint');
+  var breathing = false, breathTimer = null, phaseIn = true;
+  breathCircle.addEventListener('click', function(){
+    if (breathing) {
+      breathing = false; clearInterval(breathTimer);
+      breathCircle.style.transform = 'scale(1)';
+      breathText.textContent = '呼吸'; breathHint.textContent = '跟着圆圈 · 点我开始';
+      return;
+    }
+    breathing = true; breathHint.textContent = '再点一次停止';
+    function cycle() {
+      if (!breathing) return;
+      phaseIn = !phaseIn;
+      if (phaseIn) {
+        breathCircle.style.transform = 'scale(1.45)';
+        breathText.textContent = '吸气';
+      } else {
+        breathCircle.style.transform = 'scale(1)';
+        breathText.textContent = '呼气';
+      }
+    }
+    breathCircle.style.transform = 'scale(1.45)';
+    breathText.textContent = '吸气';
+    breathTimer = setInterval(cycle, 4000);
+  });
+
+  // 入场
+  var enter = document.getElementById('enter');
+  document.getElementById('enterBtn').addEventListener('click', function(){
+    enter.classList.add('hide');
+    loadTrack(0, true);
+    setTimeout(function(){ enter.style.display = 'none'; }, 1300);
+  });
+})();
+</script>
 </body>
 </html>
