@@ -1,268 +1,111 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>去水印 · 图片橡皮擦</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#141d38">
+<meta name="description" content="一座属于每个人的微光宇宙。拨动星图，写下一句想留给夜空的话。">
+<title>微光宇宙 · 一座小小的互动观测站</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center;
-  }
-  header { text-align: center; padding: 28px 16px 12px; }
-  header h1 { font-size: 26px; letter-spacing: 2px; }
-  header h1 span { color: #e94560; }
-  header p { color: #aaa; font-size: 13px; margin-top: 8px; }
-  .steps { display: flex; gap: 8px; margin: 12px 0 4px; font-size: 12px; color: #888; flex-wrap: wrap; justify-content: center; }
-  .steps b { color: #e94560; font-weight: 600; }
-  #dropzone {
-    width: min(92vw, 640px); border: 2px dashed #e94560; border-radius: 16px;
-    padding: 44px 20px; text-align: center; cursor: pointer; margin-top: 16px;
-    background: rgba(233,69,96,.06); transition: .2s;
-  }
-  #dropzone:hover { background: rgba(233,69,96,.12); }
-  #dropzone .big { font-size: 40px; }
-  #dropzone p { margin-top: 10px; color: #ccc; font-size: 14px; }
-  #dropzone small { color: #777; font-size: 12px; }
-  #editor { display: none; width: min(94vw, 900px); margin-top: 12px; flex-direction: column; align-items: center; }
-  #canvasWrap {
-    position: relative; max-width: 100%; border-radius: 12px; overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,.5); touch-action: none; cursor: crosshair;
-  }
-  canvas { display: block; max-width: 100%; height: auto; }
-  #maskCanvas { position: absolute; left: 0; top: 0; pointer-events: none; }
-  .toolbar {
-    display: flex; gap: 10px; align-items: center; margin: 14px 0; flex-wrap: wrap; justify-content: center;
-  }
-  .toolbar label { font-size: 13px; color: #bbb; }
-  input[type=range] { width: 120px; accent-color: #e94560; }
-  button {
-    border: none; border-radius: 999px; padding: 11px 26px; font-size: 15px; cursor: pointer;
-    font-weight: 600; transition: .15s;
-  }
-  #btnInpaint { background: #e94560; color: #fff; }
-  #btnInpaint:hover { background: #ff5c78; }
-  #btnInpaint:disabled { background: #555; cursor: wait; }
-  .ghost { background: rgba(255,255,255,.12); color: #fff; }
-  .ghost:hover { background: rgba(255,255,255,.2); }
-  #btnDownload { background: #0fbf61; color: #fff; display: none; }
-  #result { display: none; width: min(94vw, 900px); margin: 6px 0 30px; flex-direction: column; align-items: center; }
-  #result h3 { font-size: 15px; color: #0fbf61; margin-bottom: 10px; }
-  #resultCanvas { border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.5); }
-  .compare { display: flex; gap: 10px; margin-top: 12px; }
-  #progress { display: none; color: #e94560; font-size: 14px; margin: 10px 0; }
-  footer { margin-top: auto; padding: 20px; color: #555; font-size: 12px; text-align: center; }
-  footer a { color: #e94560; text-decoration: none; }
+@font-face{font-family:Observatory;src:url('assets/observatory-serif.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
+:root{color-scheme:dark;--night:#141d38;--deep:#0b1125;--ink:#eaf0fb;--muted:#9caac4;--silver:#b9d1ec;--gold:#f3c86a;--line:rgba(184,205,235,.18);--serif:Observatory,"Songti SC","Noto Serif CJK SC","STSong",serif;--sans:Observatory,system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--night);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.75;overflow-x:hidden}button,input,textarea{font:inherit}button{color:inherit}a{color:inherit}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:4px}.skip{position:absolute;left:-9999px;top:1rem;z-index:5;background:var(--ink);color:var(--deep);padding:.5rem 1rem}.skip:focus{left:1rem}.shell{width:min(1320px,calc(100% - 88px));margin:auto}.topbar{height:84px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:relative;z-index:2}.brand{display:flex;gap:12px;align-items:center;text-decoration:none;font-size:14px;letter-spacing:.08em}.brand-mark{width:25px;height:25px;border:1px solid rgba(243,200,106,.75);border-radius:50%;position:relative}.brand-mark:before{content:"";position:absolute;width:5px;height:5px;background:var(--gold);border-radius:50%;top:4px;right:3px;box-shadow:0 0 12px var(--gold)}.brand-mark:after{content:"";position:absolute;inset:5px;border:1px solid rgba(185,209,236,.55);border-radius:50%;transform:rotate(-35deg) scaleX(1.45)}.nav{display:flex;gap:35px;align-items:center}.nav a{font-size:13px;text-decoration:none;color:var(--muted);transition:color .2s}.nav a:hover{color:var(--ink)}.nav .quiet-link{border-bottom:1px solid rgba(243,200,106,.5);padding:5px 0;color:var(--silver)}
+.hero{position:relative;min-height:710px;display:grid;grid-template-columns:minmax(320px,.85fr) minmax(500px,1.15fr);gap:4vw;align-items:center;padding:56px 0 72px}.hero:before{content:"";position:absolute;z-index:-1;inset:-85px 0 0;background:radial-gradient(ellipse at 73% 42%,rgba(55,77,125,.22),transparent 42%),radial-gradient(ellipse at 30% 80%,rgba(28,45,83,.25),transparent 40%);pointer-events:none}.hero-copy{padding-left:3.5vw;position:relative;z-index:1}.eyebrow{color:var(--silver);font-size:12px;letter-spacing:.18em;margin:0 0 25px;display:flex;align-items:center;gap:11px}.eyebrow:before{content:"";width:24px;height:1px;background:var(--gold)}h1,h2,h3,p{margin-top:0}h1{font-family:var(--serif);font-weight:400;font-size:clamp(56px,7vw,96px);letter-spacing:.04em;line-height:1.18;margin:0 0 24px}.h1-soft{display:block;color:var(--silver);font-size:.55em;letter-spacing:.11em;margin-top:14px}.intro{max-width:390px;color:#bac5d9;font-family:var(--serif);font-size:17px;line-height:2.05;margin:0 0 33px}.hero-actions{display:flex;align-items:center;gap:22px}.primary-link{display:inline-flex;align-items:center;gap:12px;text-decoration:none;color:var(--deep);background:var(--gold);padding:10px 19px;border-radius:2px;font-size:13px;font-weight:600;transition:background .2s}.primary-link:hover{background:#ffda82}.primary-link .spark{font-size:17px}.text-link{font-size:13px;text-decoration:none;color:var(--silver);border-bottom:1px solid rgba(185,209,236,.35);padding-bottom:3px}.hero-note{color:#7f8eaa;font-size:11px;margin-top:42px;letter-spacing:.04em}
+.sky-stage{height:min(590px,66vw);min-height:450px;position:relative;isolation:isolate}.sky-stage:before{content:"";position:absolute;inset:7% 4%;border-radius:50%;background:radial-gradient(ellipse at 52% 51%,rgba(60,85,138,.22),rgba(25,36,69,.07) 42%,transparent 69%);filter:blur(6px);z-index:-1}.sky-stage:after{content:"";position:absolute;inset:9% 8%;border:1px solid rgba(170,197,232,.07);border-radius:50%;transform:rotate(-24deg) scaleY(.54);pointer-events:none}.sky-canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y;cursor:grab}.sky-canvas:active{cursor:grabbing}.sky-canvas:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}.sky-caption{position:absolute;bottom:7%;left:50%;transform:translateX(-50%);text-align:center;white-space:nowrap;color:#8493ae;font-size:11px;letter-spacing:.12em;pointer-events:none}.sky-caption strong{display:block;font-family:var(--serif);font-weight:400;font-size:21px;letter-spacing:.1em;color:#d7e3f4;margin-bottom:3px}.coord{position:absolute;font-size:10px;color:#71809d;letter-spacing:.1em}.coord.one{top:13%;right:12%}.coord.two{top:38%;left:2%}.coord.three{right:5%;bottom:24%}.star-tools{position:absolute;right:1%;top:3%;display:flex;gap:6px}.icon-button{border:1px solid rgba(185,209,236,.23);background:rgba(16,25,49,.54);width:37px;height:37px;border-radius:50%;cursor:pointer;color:#b7c6df;font-size:14px}.icon-button:hover{border-color:var(--gold);color:var(--gold)}
+.section{padding:112px 0;border-top:1px solid var(--line)}.section-heading{display:grid;grid-template-columns:1fr 1.1fr;gap:5vw;align-items:end;margin-bottom:53px}.section-heading h2{font-family:var(--serif);font-weight:400;font-size:clamp(34px,4vw,52px);line-height:1.35;letter-spacing:.04em;margin:0}.section-heading p{max-width:430px;color:var(--muted);margin:0 0 5px;font-size:14px;line-height:2}.constellation-layout{display:grid;grid-template-columns:.85fr 1.15fr;gap:10vw;align-items:start}.controls{padding-top:8px}.control-label{color:#8493ae;font-size:11px;letter-spacing:.1em;margin:0 0 13px}.choice-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:34px}.choice{border:1px solid rgba(185,209,236,.21);background:transparent;color:#b5c2d9;padding:8px 13px;font-size:12px;cursor:pointer;transition:.18s}.choice:hover{border-color:rgba(243,200,106,.7);color:var(--ink)}.choice[aria-pressed="true"]{border-color:var(--gold);color:var(--gold);background:rgba(243,200,106,.07)}.choice-note{min-height:54px;color:#a9b8d1;font-family:var(--serif);font-size:14px;margin:12px 0 0;line-height:1.9}.constellation-list{list-style:none;padding:0;margin:0;border-top:1px solid var(--line)}.constellation-list li{border-bottom:1px solid var(--line)}.star-choice{display:grid;width:100%;grid-template-columns:32px 1fr auto;align-items:center;gap:13px;text-align:left;border:0;background:none;padding:15px 4px;cursor:pointer;color:#d4deec}.star-choice:hover,.star-choice[aria-pressed="true"]{color:var(--gold)}.star-choice .dot{width:5px;height:5px;background:var(--silver);border-radius:50%;box-shadow:0 0 8px rgba(185,209,236,.75);justify-self:center}.star-choice small{color:#7f8eaa;font-size:11px}.star-choice[aria-pressed="true"] .dot{background:var(--gold);box-shadow:0 0 12px var(--gold)}.observation{border-left:1px solid rgba(243,200,106,.45);padding:7px 0 7px 25px;color:#acbad0;font-family:var(--serif);font-size:17px;line-height:2}.observation strong{display:block;color:#e1e8f3;font-weight:400;font-size:22px;margin-bottom:8px}.observation small{display:block;color:#8493ae;font-family:var(--sans);font-size:11px;margin-top:14px}
+.note-section{background:linear-gradient(180deg,rgba(12,19,40,.28),rgba(12,19,40,.62));position:relative;overflow:hidden}.note-section:after{content:"✳";font-family:var(--serif);font-size:310px;color:rgba(167,191,226,.025);position:absolute;right:4%;top:9%;pointer-events:none}.note-inner{position:relative;z-index:1;display:grid;grid-template-columns:.8fr 1.2fr;gap:9vw}.note-title h2{font-family:var(--serif);font-weight:400;font-size:clamp(36px,4vw,54px);line-height:1.4;margin:0}.note-title p{max-width:310px;color:var(--muted);font-size:13px;line-height:2;margin-top:18px}.note-form{padding-top:12px}.note-form label{display:block;color:#b1bfd5;font-size:12px;margin-bottom:10px}.note-form textarea{width:100%;min-height:130px;resize:vertical;background:rgba(9,15,33,.56);border:1px solid rgba(185,209,236,.24);padding:16px;color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.8}.note-form textarea::placeholder{color:#64718b}.form-bottom{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:12px}.counter,.privacy{font-size:11px;color:#8493ae}.save-button{border:1px solid rgba(243,200,106,.7);background:transparent;color:var(--gold);padding:8px 17px;cursor:pointer;font-size:12px}.save-button:hover{background:rgba(243,200,106,.1)}.saved-note{min-height:32px;margin-top:20px;color:#d9e3f2;font-family:var(--serif);font-size:16px;overflow-wrap:anywhere}.saved-note:empty{display:none}.saved-label{color:var(--gold);font-family:var(--sans);font-size:10px;letter-spacing:.1em;margin-right:10px}
+.destinations{padding-bottom:128px}.dest-list{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}.dest{position:relative;padding:27px 29px 30px 0;border-bottom:1px solid var(--line);min-height:232px;display:flex;flex-direction:column}.dest+.dest{padding-left:28px;border-left:1px solid var(--line)}.dest-symbol{font-family:var(--serif);color:var(--gold);font-size:24px;margin-bottom:22px}.dest h3{font-family:var(--serif);font-size:23px;font-weight:400;margin:0 0 8px}.dest p{color:#9eacc3;font-size:13px;line-height:1.95;margin:0;max-width:290px}.dest .fiction{margin-top:auto;padding-top:18px;color:#71809b;font-size:10px;letter-spacing:.04em}.footer{border-top:1px solid var(--line);padding:26px 0 34px;display:flex;justify-content:space-between;color:#77849d;font-size:11px}.footer span+span{text-align:right}.toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,20px);background:#e3ebf6;color:#111b33;padding:9px 16px;font-size:12px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:10}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:900px){.shell{width:min(100% - 48px,760px)}.hero{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:1vw;min-height:630px;padding:40px 0}.hero-copy{padding-left:0}.sky-stage{min-height:390px}.hero-note{margin-top:28px}.section{padding:86px 0}.constellation-layout{gap:6vw}.note-inner{gap:6vw}}
+@media(max-width:650px){.shell{width:calc(100% - 40px)}.topbar{height:68px}.nav{gap:17px}.nav a{font-size:11px}.brand{font-size:12px;gap:8px}.brand-mark{width:22px;height:22px}.hero{display:flex;flex-direction:column;align-items:stretch;gap:0;min-height:auto;padding:57px 0 64px}.hero-copy{order:0}.eyebrow{margin-bottom:20px}h1{font-size:clamp(54px,15vw,76px);margin-bottom:17px}.h1-soft{font-size:.49em;margin-top:10px}.intro{font-size:15px;line-height:1.9;max-width:340px;margin-bottom:25px}.hero-actions{gap:17px}.hero-note{margin-top:20px}.sky-stage{order:1;width:calc(100% + 32px);margin:5px -16px 0;height:380px;min-height:360px}.sky-stage:after{inset:10% 4%}.sky-caption{bottom:6%;font-size:10px}.sky-caption strong{font-size:18px}.coord.one{right:9%}.coord.two{left:4%}.star-tools{right:7%;top:4%}.section{padding:72px 0}.section-heading{grid-template-columns:1fr;gap:16px;margin-bottom:35px}.section-heading h2{font-size:38px}.section-heading p{font-size:13px}.constellation-layout{grid-template-columns:1fr;gap:35px}.controls{padding:0}.choice-row{margin-bottom:26px}.observation{font-size:15px;padding-left:18px}.observation strong{font-size:20px}.note-inner{grid-template-columns:1fr;gap:28px}.note-title h2{font-size:40px}.note-section:after{font-size:210px;right:-6%;top:0}.form-bottom{align-items:flex-end}.dest-list{grid-template-columns:1fr}.dest{min-height:0;padding:22px 0 23px}.dest+.dest{padding-left:0;border-left:0}.dest-symbol{margin-bottom:12px}.dest .fiction{padding-top:10px}.destinations{padding-bottom:76px}.footer{gap:20px;line-height:1.8}.footer span+span{max-width:150px}.skip{font-size:13px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
-<header>
-  <h1>去水印 <span>·</span> 图片橡皮擦</h1>
-  <p>上传图片 → 涂抹水印 → 一键去除，全程本地处理，不上传服务器</p>
-  <div class="steps"><span><b>1</b> 上传</span>→<span><b>2</b> 涂抹水印</span>→<span><b>3</b> 去除</span>→<span><b>4</b> 下载</span></div>
+<a class="skip" href="#main">跳到主要内容</a>
+<header class="shell topbar">
+  <a class="brand" href="#top" aria-label="微光宇宙首页"><span class="brand-mark" aria-hidden="true"></span><span>微光宇宙</span></a>
+  <nav class="nav" aria-label="主导航"><a href="#atlas">星图</a><a href="#letter">留一句话</a><a class="quiet-link" href="#elsewhere">去别处看看</a></nav>
 </header>
-
-<div id="dropzone">
-  <div class="big">🖼️</div>
-  <p>点击选择图片，或拖拽到这里</p>
-  <small>支持 JPG / PNG / WebP，图片仅在本地处理</small>
-  <input type="file" id="fileInput" accept="image/*" style="display:none">
-</div>
-
-<div id="editor">
-  <div id="canvasWrap">
-    <canvas id="imgCanvas"></canvas>
-    <canvas id="maskCanvas"></canvas>
-  </div>
-  <div class="toolbar">
-    <label>笔刷 <input type="range" id="brushSize" min="4" max="80" value="24"></label>
-    <button class="ghost" id="btnClear">清除涂抹</button>
-    <button class="ghost" id="btnReset">换一张</button>
-    <button id="btnInpaint">✨ 一键去水印</button>
-  </div>
-  <div id="progress">正在填充… <span id="pct">0%</span></div>
-</div>
-
-<div id="result">
-  <h3>✅ 处理完成（对比原图：<button class="ghost" id="btnToggle" style="padding:4px 14px;font-size:13px">看原图</button>）</h3>
-  <canvas id="resultCanvas"></canvas>
-  <div class="compare">
-    <button id="btnDownload">⬇ 下载图片</button>
-    <button class="ghost" id="btnBack">继续修改</button>
-  </div>
-</div>
-
-<footer>liuyangdev.site · 纯前端本地处理，不收集任何图片</footer>
-
+<main id="main" class="shell">
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <p class="eyebrow">一座小小的互动观测站</p>
+      <h1 id="hero-title">微光<span class="h1-soft">宇宙</span></h1>
+      <p class="intro">夜色很大，不必急着找到答案。<br>先认出一颗星，给今天留一点温柔的空隙。</p>
+      <div class="hero-actions"><a class="primary-link" href="#atlas"><span class="spark" aria-hidden="true">✦</span>开始观测</a><a class="text-link" href="#letter">写给夜空</a></div>
+      <p class="hero-note">一片可以拨动、安静停留的想象星域</p>
+    </div>
+    <div class="sky-stage" aria-label="可互动的星空星图">
+      <canvas id="sky" class="sky-canvas" tabindex="0" role="img" aria-label="互动星空。点击星星查看名字，拖动可旋转星图。下方也有键盘可用的星点列表。">星图无法显示时，请使用下方星点列表。</canvas>
+      <span class="coord one" aria-hidden="true">赤经 04h 18m</span><span class="coord two" aria-hidden="true">北纬 27°</span><span class="coord three" aria-hidden="true">深空 · 近望</span>
+      <div class="star-tools" aria-label="星空操作"><button class="icon-button" id="recenter" type="button" aria-label="重置星图位置" title="重置星图">◎</button><button class="icon-button" id="toggle-motion" type="button" aria-label="暂停星空微动" aria-pressed="false" title="暂停星空微动">Ⅱ</button></div>
+      <div class="sky-caption" aria-live="polite"><strong id="sky-name">慢慢靠近</strong><span id="sky-desc">在这片虚构星域里，找到你想停留的微光</span></div>
+    </div>
+  </section>
+  <section class="section" id="atlas" aria-labelledby="atlas-title">
+    <div class="section-heading"><h2 id="atlas-title">让星图，<br>按你的心意排列。</h2><p>切换星群，或换一种夜色。这里没有标准路线；点选星点，读一则为此刻写下的小小观测。</p></div>
+    <div class="constellation-layout">
+      <div class="controls">
+        <p class="control-label">选择今晚的星群</p>
+        <div class="choice-row" role="group" aria-label="选择星群"><button type="button" class="choice constellation-toggle" data-set="harbor" aria-pressed="true">潮汐港</button><button type="button" class="choice constellation-toggle" data-set="orchard" aria-pressed="false">静夜果园</button><button type="button" class="choice constellation-toggle" data-set="drift" aria-pressed="false">漂流信号</button></div>
+        <p class="control-label">调一调夜色</p>
+        <div class="choice-row" role="group" aria-label="选择夜色"><button type="button" class="choice scene-toggle" data-scene="blue" aria-pressed="true">月蓝</button><button type="button" class="choice scene-toggle" data-scene="dusk" aria-pressed="false">暮金</button><button type="button" class="choice scene-toggle" data-scene="deep" aria-pressed="false">深夜</button></div>
+        <p id="set-note" class="choice-note" aria-live="polite">潮水退去以后，岸边还留着几颗没有熄灭的灯。</p>
+      </div>
+      <div>
+        <ul class="constellation-list" id="star-list" aria-label="可选择的星点"></ul>
+        <div class="observation" aria-live="polite"><strong id="obs-title">灯塔的回声</strong><span id="obs-copy">有些方向不必追上，只要知道它仍然亮着。</span><small>一段虚构的星空短笺</small></div>
+      </div>
+    </div>
+  </section>
+  <section class="section note-section" id="letter" aria-labelledby="letter-title">
+    <div class="shell note-inner">
+      <div class="note-title"><p class="eyebrow">仅留在这台设备</p><h2 id="letter-title">给夜空，<br>留一句话。</h2><p>写下想记住的心情。它只保存在当前浏览器，不会发送到任何地方。</p></div>
+      <form class="note-form" id="note-form">
+        <label for="note-input">此刻想说的话 <span>(最多 80 字)</span></label>
+        <textarea id="note-input" maxlength="80" placeholder="例如：今天也有认真地走到这里。" aria-describedby="note-help note-count"></textarea>
+        <div class="form-bottom"><span class="counter" id="note-count" aria-live="polite">0 / 80</span><button class="save-button" type="submit">把这句话留下</button></div>
+        <div class="form-bottom"><span class="privacy" id="note-help">保存在本机浏览器，可随时改写。</span><button type="button" class="text-link" id="clear-note" style="background:none;border:0;cursor:pointer">清除留句</button></div>
+        <p class="saved-note" id="saved-note" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+  <section class="section destinations" id="elsewhere" aria-labelledby="elsewhere-title">
+    <div class="section-heading"><h2 id="elsewhere-title">再去几处，<br>不在地图上的地方。</h2><p>下面都是写给想象的坐标。没有现实地点，也不需要抵达——只要读到时，心里有一点回声就好。</p></div>
+    <div class="dest-list">
+      <article class="dest"><span class="dest-symbol" aria-hidden="true">⌁</span><h3>失眠者的月台</h3><p>末班车之后，月台把所有没说完的话，轻轻收进行李架。</p><span class="fiction">想象坐标 · 00:17</span></article>
+      <article class="dest"><span class="dest-symbol" aria-hidden="true">✳</span><h3>低重力花园</h3><p>这里的种子不向下落。每一朵花，都慢悠悠地学会漂浮。</p><span class="fiction">想象坐标 · 第七颗卫星</span></article>
+      <article class="dest"><span class="dest-symbol" aria-hidden="true">☾</span><h3>回声收集处</h3><p>把一句温柔的话说给风听，明天它也许会从别人的口袋里回来。</p><span class="fiction">想象坐标 · 背风面</span></article>
+    </div>
+  </section>
+</main>
+<footer class="shell footer"><span>微光宇宙 · 一座小小的互动观测站</span><span>所有星名与地点均为虚构。你的留句只保存在本机。</span></footer>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script>
-(function(){
-  "use strict";
-  const MAX_DIM = 1600;
-  const dropzone = document.getElementById('dropzone');
-  const fileInput = document.getElementById('fileInput');
-  const editor = document.getElementById('editor');
-  const wrap = document.getElementById('canvasWrap');
-  const imgC = document.getElementById('imgCanvas');
-  const maskC = document.getElementById('maskCanvas');
-  const resC = document.getElementById('resultCanvas');
-  const result = document.getElementById('result');
-  const imgCtx = imgC.getContext('2d');
-  const maskCtx = maskC.getContext('2d');
-  const resCtx = resC.getContext('2d');
-  const brushSize = document.getElementById('brushSize');
-  const btnInpaint = document.getElementById('btnInpaint');
-  const progress = document.getElementById('progress');
-  const pct = document.getElementById('pct');
-
-  let imgW = 0, imgH = 0, drawing = false, lastX = 0, lastY = 0, hasMask = false;
-  let origData = null;
-
-  dropzone.onclick = () => fileInput.click();
-  dropzone.ondragover = e => { e.preventDefault(); dropzone.style.background = 'rgba(233,69,96,.15)'; };
-  dropzone.ondragleave = () => dropzone.style.background = '';
-  dropzone.ondrop = e => { e.preventDefault(); dropzone.style.background = ''; if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); };
-  fileInput.onchange = () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); };
-
-  function loadFile(f) {
-    const url = URL.createObjectURL(f);
-    const img = new Image();
-    img.onload = () => {
-      let w = img.naturalWidth, h = img.naturalHeight;
-      const s = Math.min(1, MAX_DIM / Math.max(w, h));
-      imgW = Math.round(w * s); imgH = Math.round(h * s);
-      for (const c of [imgC, maskC]) { c.width = imgW; c.height = imgH; }
-      imgCtx.drawImage(img, 0, 0, imgW, imgH);
-      maskCtx.clearRect(0, 0, imgW, imgH);
-      origData = imgCtx.getImageData(0, 0, imgW, imgH);
-      hasMask = false;
-      URL.revokeObjectURL(url);
-      dropzone.style.display = 'none';
-      editor.style.display = 'flex';
-      result.style.display = 'none';
-    };
-    img.src = url;
-  }
-
-  function pos(e) {
-    const r = imgC.getBoundingClientRect();
-    return [ (e.clientX - r.left) * imgW / r.width, (e.clientY - r.top) * imgH / r.height ];
-  }
-  function dab(x, y) {
-    const r = +brushSize.value / 2;
-    maskCtx.fillStyle = 'rgba(233,69,96,.55)';
-    maskCtx.beginPath(); maskCtx.arc(x, y, r, 0, 7); maskCtx.fill();
-    hasMask = true;
-  }
-  wrap.addEventListener('pointerdown', e => { drawing = true; [lastX, lastY] = pos(e); dab(lastX, lastY); wrap.setPointerCapture(e.pointerId); });
-  wrap.addEventListener('pointermove', e => {
-    if (!drawing) return;
-    const [x, y] = pos(e);
-    const steps = Math.max(1, Math.hypot(x - lastX, y - lastY) / 4);
-    for (let i = 1; i <= steps; i++) dab(lastX + (x - lastX) * i / steps, lastY + (y - lastY) * i / steps);
-    [lastX, lastY] = [x, y];
-  });
-  wrap.addEventListener('pointerup', () => drawing = false);
-
-  document.getElementById('btnClear').onclick = () => { maskCtx.clearRect(0,0,imgW,imgH); hasMask = false; };
-  document.getElementById('btnReset').onclick = () => { editor.style.display='none'; result.style.display='none'; dropzone.style.display='block'; fileInput.value=''; };
-  document.getElementById('btnBack').onclick = () => { result.style.display='none'; editor.style.display='flex'; };
-
-  // ---- Inpainting: BFS 距离变换 + 由外向内逐层填充 ----
-  function buildMask() {
-    const md = maskCtx.getImageData(0, 0, imgW, imgH).data;
-    const m = new Uint8Array(imgW * imgH);
-    for (let i = 0; i < m.length; i++) if (md[i*4+3] > 10) m[i] = 1;
-    return m;
-  }
-
-  function inpaint(src, mask, onTick) {
-    return new Promise(resolve => {
-      const w = imgW, h = imgH, n = w * h;
-      const dist = new Int32Array(n).fill(-1);
-      const q = new Int32Array(n); let qh = 0, qt = 0;
-      for (let i = 0; i < n; i++) if (!mask[i]) { dist[i] = 0; q[qt++] = i; }
-      const t0 = performance.now();
-      // 分块 BFS，避免长任务卡死
-      (function bfs() {
-        const end = Math.min(qt, qh + 400000);
-        while (qh < end) {
-          const i = q[qh++], x = i % w, y = (i / w) | 0, d = dist[i] + 1;
-          if (x > 0 && dist[i-1] < 0) { dist[i-1] = d; q[qt++] = i-1; }
-          if (x < w-1 && dist[i+1] < 0) { dist[i+1] = d; q[qt++] = i+1; }
-          if (y > 0 && dist[i-w] < 0) { dist[i-w] = d; q[qt++] = i-w; }
-          if (y < h-1 && dist[i+w] < 0) { dist[i+w] = d; q[qt++] = i+w; }
-        }
-        if (qh < qt) { onTick(qh / qt * 0.3); setTimeout(bfs, 0); } else fill();
-      })();
-
-      function fill() {
-        const order = [];
-        for (let i = 0; i < n; i++) if (mask[i]) order.push(i);
-        order.sort((a, b) => dist[a] - dist[b]);
-        const out = new Uint8ClampedArray(src);
-        const R = 10, total = order.length;
-        let k = 0;
-        (function step() {
-          const end = Math.min(total, k + 6000);
-          for (; k < end; k++) {
-            const i = order[k], x = i % w, y = (i / w) | 0, di = dist[i];
-            let r = 0, g = 0, b = 0, ws = 0;
-            for (let dy = -R; dy <= R; dy++) {
-              const ny = y + dy; if (ny < 0 || ny >= h) continue;
-              for (let dx = -R; dx <= R; dx++) {
-                if (!dx && !dy) continue;
-                const nx = x + dx; if (nx < 0 || nx >= w) continue;
-                const ni = ny * w + nx;
-                if (dist[ni] >= 0 && dist[ni] < di) {
-                  const wt = 1 / (1 + dx*dx + dy*dy);
-                  r += out[ni*4] * wt; g += out[ni*4+1] * wt; b += out[ni*4+2] * wt; ws += wt;
-                }
-              }
-            }
-            if (ws > 0) { out[i*4] = r/ws; out[i*4+1] = g/ws; out[i*4+2] = b/ws; }
-          }
-          onTick(0.3 + 0.7 * k / total);
-          if (k < total) setTimeout(step, 0);
-          else resolve(out);
-        })();
-      }
-    });
-  }
-
-  btnInpaint.onclick = async () => {
-    if (!hasMask) { alert('先用手指/鼠标涂抹水印区域'); return; }
-    btnInpaint.disabled = true;
-    progress.style.display = 'block';
-    const mask = buildMask();
-    const out = await inpaint(origData.data, mask, p => pct.textContent = Math.round(p * 100) + '%');
-    resC.width = imgW; resC.height = imgH;
-    resCtx.putImageData(new ImageData(out, imgW, imgH), 0, 0);
-    progress.style.display = 'none';
-    btnInpaint.disabled = false;
-    editor.style.display = 'none';
-    result.style.display = 'flex';
-    document.getElementById('btnDownload').style.display = 'inline-block';
-    showingOrig = false;
-    document.getElementById('btnToggle').textContent = '看原图';
-    result.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  let showingOrig = false, resultData = null;
-  document.getElementById('btnToggle').onclick = function() {
-    if (!resultData) resultData = resCtx.getImageData(0, 0, imgW, imgH);
-    showingOrig = !showingOrig;
-    resCtx.putImageData(showingOrig ? origData : resultData, 0, 0);
-    this.textContent = showingOrig ? '看处理后' : '看原图';
-  };
-
-  document.getElementById('btnDownload').onclick = () => {
-    const a = document.createElement('a');
-    a.download = 'qu-shuiyin-' + Date.now() + '.png';
-    a.href = resC.toDataURL('image/png');
-    a.click();
-  };
+(()=>{'use strict';
+const sets={
+ harbor:{label:'潮汐港',note:'潮水退去以后，岸边还留着几颗没有熄灭的灯。',stars:[['灯塔','有些方向不必追上，只要知道它仍然亮着。'],['浅湾','安静不是空白，是把声音放轻一点。'],['回航','晚一点回来也没关系，港口认得你的船。'],['潮痕','离开以后留下的线，也曾经照亮过岸。'],['候鸟','愿你有飞远的自由，也有停下的地方。']]},
+ orchard:{label:'静夜果园',note:'果实在无人催促的夜里，慢慢记住了月光的温度。',stars:[['月梨','成熟有自己的时刻，不必提前摘下明天。'],['晚风','有些答案会从叶子的背面，轻轻翻过来。'],['种子','看不见的生长，也算数。'],['旧枝','走过的季节并没有浪费，它们让枝头更稳。'],['萤火','微小的亮，也能把路分成一步一步。']]},
+ drift:{label:'漂流信号',note:'一封没有收件人的信，正穿过安静的深空。',stars:[['信号','你发出的微光，也许正被很远的谁看见。'],['静电','偶尔的杂音，不会抹掉真正的消息。'],['远岸','还没抵达的地方，可以先在心里有个名字。'],['脉冲','慢下来时，仍然在前进。'],['返照','有些光走了很久，才来到现在。']]}
+};
+const palettes={blue:{bg:'#141d38',deep:'#0b1125',gold:'#f3c86a',silver:'#b9d1ec',star:'#edf4ff'},dusk:{bg:'#211e36',deep:'#171426',gold:'#ffd181',silver:'#d9bfd3',star:'#fff2db'},deep:{bg:'#0d142b',deep:'#080d1e',gold:'#d5c180',silver:'#9bb7db',star:'#dce9ff'}};
+const canvas=document.querySelector('#sky'),ctx=canvas.getContext('2d');let w=0,h=0,dpr=1,offset=0,drag=null,anim=true,selected=0,frame=0,last=0;let stars=[];const reduced=matchMedia('(prefers-reduced-motion: reduce)');if(reduced.matches)anim=false;
+function seedStars(){let seed=82741;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};stars=Array.from({length:165},(_,i)=>({x:rand(),y:rand(),r:.35+rand()*1.15,a:.22+rand()*.65,p:rand()*6.28,cluster:i<5?i:-1}))}
+function points(){const cx=w*.52,cy=h*.44,rx=Math.min(w*.29,170),ry=Math.min(h*.27,160);const coords=[[.05,.2],[.39,-.16],[.74,-.03],[.91,.37],[.58,.79]];return coords.map(([x,y],i)=>({x:cx+(x-.5)*rx*2+offset,y:cy+y*ry*1.2,r:i===selected?5.5:3.8,i}))}
+function resize(){const r=canvas.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2);w=r.width;h=r.height;canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);seedStars();draw()}
+function draw(t=0){if(!ctx||!w)return;ctx.clearRect(0,0,w,h);const p=palettes[document.documentElement.dataset.scene||'blue'];const bg=ctx.createRadialGradient(w*.52,h*.43,4,w*.52,h*.43,w*.54);bg.addColorStop(0,'rgba(71,94,145,.16)');bg.addColorStop(.53,'rgba(40,57,99,.07)');bg.addColorStop(1,'rgba(10,16,35,0)');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+for(const s of stars){const tw=anim?.72+.28*Math.sin(t*.0007+s.p):1;ctx.globalAlpha=s.a*tw;ctx.fillStyle=p.star;ctx.beginPath();ctx.arc(s.x*w,s.y*h,s.r,0,Math.PI*2);ctx.fill();if(s.r>1.15){ctx.globalAlpha=.18*tw;ctx.fillRect(s.x*w-4,s.y*h-.35,8,.7);ctx.fillRect(s.x*w-.35,s.y*h-4,.7,8)}}ctx.globalAlpha=1;
+const pts=points();ctx.lineWidth=1;ctx.strokeStyle='rgba(185,209,236,.32)';ctx.beginPath();pts.forEach((q,i)=>i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y));ctx.stroke();pts.forEach((q,i)=>{const glow=ctx.createRadialGradient(q.x,q.y,1,q.x,q.y,i===selected?23:15);glow.addColorStop(0,i===selected?'rgba(243,200,106,.42)':'rgba(185,209,236,.25)');glow.addColorStop(1,'rgba(185,209,236,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(q.x,q.y,i===selected?23:15,0,Math.PI*2);ctx.fill();ctx.fillStyle=i===selected?p.gold:p.star;ctx.shadowBlur=i===selected?14:8;ctx.shadowColor=i===selected?p.gold:p.silver;ctx.beginPath();ctx.arc(q.x,q.y,q.r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;if(i===selected){ctx.strokeStyle='rgba(243,200,106,.65)';ctx.beginPath();ctx.arc(q.x,q.y,10,0,Math.PI*2);ctx.stroke()}});}
+function animate(t){draw(t);if(anim)frame=requestAnimationFrame(animate)}
+function announceStar(i){selected=(i+sets[currentSet].stars.length)%sets[currentSet].stars.length;const [name,desc]=sets[currentSet].stars[selected];document.querySelector('#sky-name').textContent=name;document.querySelector('#sky-desc').textContent=desc;document.querySelector('#obs-title').textContent=name+'的回声';document.querySelector('#obs-copy').textContent=desc;renderList();if(!anim)draw()}
+let currentSet='harbor';function renderList(){const list=document.querySelector('#star-list');list.replaceChildren();sets[currentSet].stars.forEach(([name,desc],i)=>{const li=document.createElement('li'),b=document.createElement('button');b.type='button';b.className='star-choice';b.setAttribute('aria-pressed',String(i===selected));b.innerHTML='<span class="dot" aria-hidden="true"></span><span></span><small></small>';b.children[1].textContent=name;b.children[2].textContent=String(i+1).padStart(2,'0');b.setAttribute('aria-label',`选择${name}：${desc}`);b.addEventListener('click',()=>announceStar(i));li.append(b);list.append(li)})}
+function setSet(key){currentSet=key;selected=0;document.querySelector('#set-note').textContent=sets[key].note;document.querySelectorAll('.constellation-toggle').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.set===key)));announceStar(0);draw()}
+document.querySelectorAll('.constellation-toggle').forEach(b=>b.addEventListener('click',()=>setSet(b.dataset.set)));
+document.querySelectorAll('.scene-toggle').forEach(b=>b.addEventListener('click',()=>{const key=b.dataset.scene;document.documentElement.dataset.scene=key;const p=palettes[key];document.documentElement.style.setProperty('--night',p.bg);document.documentElement.style.setProperty('--deep',p.deep);document.documentElement.style.setProperty('--gold',p.gold);document.documentElement.style.setProperty('--silver',p.silver);document.querySelectorAll('.scene-toggle').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));draw()}));
+canvas.addEventListener('pointerdown',e=>{drag={x:e.clientX,offset};canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(drag){offset=drag.offset+e.clientX-drag.x;draw()}});canvas.addEventListener('pointerup',e=>{if(!drag)return;const dx=e.clientX-drag.x;if(Math.abs(dx)<8){const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;const pts=points();let best=-1,dist=38;pts.forEach((q,i)=>{const d=Math.hypot(q.x-x,q.y-y);if(d<dist){dist=d;best=i}});if(best>=0)announceStar(best)}drag=null});canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();announceStar(selected+1)}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();announceStar(selected-1)}});
+document.querySelector('#recenter').addEventListener('click',()=>{offset=0;draw();document.querySelector('#toast').textContent='星图已回到原位';showToast()});const motionBtn=document.querySelector('#toggle-motion');function syncMotionControl(){motionBtn.setAttribute('aria-pressed',String(!anim));motionBtn.textContent=anim?'Ⅱ':'▶';motionBtn.setAttribute('aria-label',anim?'暂停星空微动':'继续星空微动')}syncMotionControl();motionBtn.addEventListener('click',()=>{anim=!anim;syncMotionControl();if(anim)frame=requestAnimationFrame(animate);else{cancelAnimationFrame(frame);draw()}});reduced.addEventListener?.('change',e=>{if(e.matches){anim=false;cancelAnimationFrame(frame)}syncMotionControl();if(anim)frame=requestAnimationFrame(animate);draw()});
+const input=document.querySelector('#note-input'),counter=document.querySelector('#note-count'),saved=document.querySelector('#saved-note'),storageKey='liuyangdev-microcosm-note';function count(){counter.textContent=Array.from(input.value).length+' / 80'}function readSaved(){try{const v=localStorage.getItem(storageKey);saved.replaceChildren();if(v){const label=document.createElement('span');label.className='saved-label';label.textContent='留在这里';const text=document.createElement('span');text.textContent=v;saved.append(label,text)}}catch{saved.textContent='本机存储不可用；这句话不会被保存。'}}input.addEventListener('input',count);try{const existing=localStorage.getItem(storageKey);if(existing){input.value=Array.from(existing).slice(0,80).join('');count();readSaved()}}catch{document.querySelector('#note-help').textContent='当前浏览器无法使用本机存储。'}document.querySelector('#note-form').addEventListener('submit',e=>{e.preventDefault();const value=Array.from(input.value.trim()).slice(0,80).join('');if(!value){input.focus();toast('先写下一句话，再把它留在这里。');return}try{localStorage.setItem(storageKey,value);input.value=value;count();readSaved();toast('这句话已经留在这台设备。')}catch{toast('浏览器暂时无法保存，请检查本机存储设置。')}});document.querySelector('#clear-note').addEventListener('click',()=>{try{localStorage.removeItem(storageKey)}catch{}input.value='';count();saved.replaceChildren();toast('留句已清除。')});let toastTimer;function toast(message){const el=document.querySelector('#toast');el.textContent=message;showToast()}function showToast(){const el=document.querySelector('#toast');el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2300)}
+renderList();announceStar(0);new ResizeObserver(resize).observe(canvas);resize();if(anim)frame=requestAnimationFrame(animate);
 })();
 </script>
 </body>
