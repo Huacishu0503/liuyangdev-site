@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>极限刹车挑战</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { width:100%; height:100%; overflow:hidden; background:#0b0e1a; font-family:"PingFang SC","Microsoft YaHei",sans-serif; color:#fff; user-select:none; }
+  #scene { position:fixed; inset:0; }
+  canvas { display:block; }
+  #hud { position:fixed; inset:0; pointer-events:none; z-index:10; }
+  .hud-top { position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:flex-start; padding:14px 18px; text-shadow:0 2px 8px rgba(0,0,0,.8); }
+  .hud-box { background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.15); border-radius:10px; padding:8px 14px; backdrop-filter:blur(4px); }
+  .hud-label { font-size:12px; color:#9fb3d9; letter-spacing:2px; }
+  .hud-value { font-size:22px; font-weight:700; font-variant-numeric:tabular-nums; }
+  #speed { font-size:44px; color:#ffd75e; }
+  #force-wrap { position:absolute; left:50%; bottom:86px; transform:translateX(-50%); width:min(560px,86vw); }
+  #force-bar-bg { height:22px; background:rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.25); border-radius:11px; overflow:hidden; position:relative; }
+  #force-bar { height:100%; width:0%; background:linear-gradient(90deg,#37e08b,#ffd75e 70%,#ff4d4d); transition:width .03s linear; }
+  #force-text { text-align:center; margin-top:6px; font-size:14px; color:#cfe0ff; text-shadow:0 1px 6px #000; font-variant-numeric:tabular-nums; }
+  #hint { position:absolute; left:50%; bottom:34px; transform:translateX(-50%); font-size:15px; color:#fff; background:rgba(0,0,0,.5); padding:8px 18px; border-radius:20px; border:1px solid rgba(255,255,255,.2); white-space:nowrap; }
+  #overlay { position:fixed; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; background:radial-gradient(ellipse at center, rgba(10,14,30,.55), rgba(5,7,18,.92)); text-align:center; padding:20px; }
+  #overlay h1 { font-size:clamp(30px,7vw,54px); letter-spacing:6px; margin-bottom:10px; background:linear-gradient(180deg,#fff,#ffd75e); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  #overlay .sub { color:#9fb3d9; font-size:15px; line-height:2; max-width:600px; }
+  #overlay .sub b { color:#ffd75e; }
+  #overlay .sub .danger { color:#ff6b6b; }
+  .btn { pointer-events:auto; cursor:pointer; margin-top:26px; font-size:20px; letter-spacing:8px; padding:14px 54px 14px 62px; color:#0b0e1a; font-weight:800; background:linear-gradient(180deg,#ffe27a,#ffb52e); border:none; border-radius:14px; box-shadow:0 6px 24px rgba(255,181,46,.45); }
+  .btn:active { transform:scale(.96); }
+  #result-stats { margin-top:8px; font-size:16px; line-height:2.1; color:#dbe7ff; }
+  #result-stats b { color:#ffd75e; font-size:20px; }
+  #score-big { font-size:52px; color:#ffd75e; font-weight:900; margin:6px 0; text-shadow:0 0 24px rgba(255,183,46,.6); }
+  #board { margin-top:14px; width:min(420px,88vw); max-height:30vh; overflow:auto; background:rgba(0,0,0,.5); border:1px solid rgba(255,255,255,.15); border-radius:10px; font-size:14px; }
+  #board table { width:100%; border-collapse:collapse; }
+  #board th, #board td { padding:6px 8px; text-align:center; font-variant-numeric:tabular-nums; }
+  #board th { color:#9fb3d9; font-weight:400; border-bottom:1px solid rgba(255,255,255,.12); position:sticky; top:0; background:rgba(10,14,30,.95); }
+  #board td:first-child { color:#ffd75e; }
+  .hidden { display:none !important; }
+  #vignette { position:fixed; inset:0; pointer-events:none; z-index:5; background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%); }
+  #flash { position:fixed; inset:0; pointer-events:none; z-index:15; background:#fff; opacity:0; }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="vignette"></div>
+<div id="flash"></div>
+<div id="hud" class="hidden">
+  <div class="hud-top">
+    <div class="hud-box"><div class="hud-label">制动计时</div><div class="hud-value" id="brake-time">0.000s</div></div>
+    <div class="hud-box"><div class="hud-label">距路障</div><div class="hud-value" id="dist">2600m</div></div>
+    <div class="hud-box"><div class="hud-label">车速</div><div class="hud-value"><span id="speed">0</span><span style="font-size:16px"> km/h</span></div></div>
+  </div>
+  <div id="force-wrap">
+    <div id="force-bar-bg"><div id="force-bar"></div></div>
+    <div id="force-text">踏板力度 <span id="force-n">0</span> N / 断裂极限 <span style="color:#ff6b6b">1612 N</span></div>
+  </div>
+  <div id="hint">按住 <b>空格</b> / <b>鼠标左键</b> 踩刹车（100 km/h 后可用）</div>
+</div>
+<div id="overlay">
+  <h1 id="ov-title">极限刹车挑战</h1>
+  <div class="sub" id="ov-sub">
+    车辆自动全力加速，<b>100 km/h</b> 后才能踩刹车<br>
+    一踩下刹车动力立即切断；<b>按得越久，力度越大</b><br>
+    力度达到 <span class="danger"><b>1612 N</b></span> 刹车踏板断裂，整车翻滚失败<br>
+    得分 = 刹车初速度² ÷ 刹停用时，越高越好
+  </div>
+  <div id="result-stats" class="hidden"></div>
+  <div id="score-big" class="hidden"></div>
+  <div id="board" class="hidden"></div>
+  <button class="btn" id="main-btn">GO</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+"use strict";
+var TRACK_LEN = 2600;
+var BRAKE_MIN_V = 100/3.6;
+var FORCE_MAX = 1612;
+var FORCE_RAMP = 560;
+var FORCE_DECAY = 2600;
+var MASS = 1500;
+var DECEL_K = 0.0056;
+var S = { phase:'ready', x:0, v:0, force:0, braking:false, tBrake:0, v0:0, xBrakeStart:0, maxForce:0, shake:0, flipT:0 };
+var W = window.innerWidth, H = window.innerHeight;
+var renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(W, H);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.outputEncoding = THREE.sRGBEncoding;
+document.getElementById('scene').appendChild(renderer.domElement);
+var scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0b0e1a);
+scene.fog = new THREE.Fog(0x0b0e1a, 60, 700);
+var camera = new THREE.PerspectiveCamera(62, W/H, 0.1, 3000);
+camera.position.set(0, 4.6, -10);
+scene.add(new THREE.HemisphereLight(0x8fb4ff, 0x1a2030, 0.9));
+var dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
+dirLight.position.set(30, 80, -40);
+scene.add(dirLight);
+function roadTexture(){
+  var c = document.createElement('canvas'); c.width=256; c.height=256;
+  var g = c.getContext('2d');
+  g.fillStyle='#23262e'; g.fillRect(0,0,256,256);
+  g.fillStyle='#3a3e48';
+  for(var i=0;i<300;i++){ g.fillRect(Math.random()*256, Math.random()*256, 2, 2); }
+  g.fillStyle='#e8e8e8'; g.fillRect(120,20,16,110);
+  var t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(1, 160);
+  t.anisotropy = 4;
+  return t;
+}
+var road = new THREE.Mesh(new THREE.PlaneGeometry(14, TRACK_LEN+400), new THREE.MeshStandardMaterial({map:roadTexture(), roughness:.95}));
+road.rotation.x = -Math.PI/2; road.position.set(0, 0, TRACK_LEN/2 - 100); scene.add(road);
+var ground = new THREE.Mesh(new THREE.PlaneGeometry(600, TRACK_LEN+800), new THREE.MeshStandardMaterial({color:0x11151f, roughness:1}));
+ground.rotation.x = -Math.PI/2; ground.position.set(0, -0.05, TRACK_LEN/2 - 100); scene.add(ground);
+var poleGeo = new THREE.BoxGeometry(0.4, 9, 0.4);
+var poleMat = new THREE.MeshStandardMaterial({color:0x39414f, roughness:.8});
+var lampGeo = new THREE.SphereGeometry(0.5, 8, 8);
+var lampMat = new THREE.MeshBasicMaterial({color:0xbfe0ff});
+for(var p=40; p<TRACK_LEN; p+=80){
+  [-9, 9].forEach(function(sx){
+    var pole = new THREE.Mesh(poleGeo, poleMat); pole.position.set(sx, 4.5, p); scene.add(pole);
+    var lamp = new THREE.Mesh(lampGeo, lampMat); lamp.position.set(sx*0.8, 9, p); scene.add(lamp);
+  });
+}
+function barrierTexture(){
+  var c = document.createElement('canvas'); c.width=256; c.height=64;
+  var g = c.getContext('2d');
+  for(var i=0;i<8;i++){ g.fillStyle = i%2? '#d23b3b':'#f2f2f2'; g.fillRect(i*32,0,32,64); }
+  var t = new THREE.CanvasTexture(c); t.wrapS = THREE.RepeatWrapping; t.repeat.set(6,1); return t;
+}
+var barrier = new THREE.Mesh(new THREE.BoxGeometry(16, 3, 1), new THREE.MeshStandardMaterial({map:barrierTexture(), roughness:.7}));
+barrier.position.set(0, 1.5, TRACK_LEN); scene.add(barrier);
+var barrierGlow = new THREE.PointLight(0xff4444, 1.2, 60);
+barrierGlow.position.set(0, 4, TRACK_LEN-6); scene.add(barrierGlow);
+var startLine = new THREE.Mesh(new THREE.PlaneGeometry(14, 2), new THREE.MeshBasicMaterial({color:0xffffff}));
+startLine.rotation.x = -Math.PI/2; startLine.position.set(0, 0.01, 0); scene.add(startLine);
+var car = new THREE.Group();
+var bodyMat = new THREE.MeshStandardMaterial({color:0xd8362a, roughness:.35, metalness:.5});
+var darkMat = new THREE.MeshStandardMaterial({color:0x14161c, roughness:.6});
+var glassMat = new THREE.MeshStandardMaterial({color:0x9fd8ff, roughness:.1, metalness:.7});
+var body = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.62, 4.4), bodyMat);
+body.position.y = 0.72; car.add(body);
+var nose = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.42, 1.0), bodyMat);
+nose.position.set(0, 0.62, 2.55); car.add(nose);
+var cabin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.55, 2.0), glassMat);
+cabin.position.set(0, 1.25, -0.2); car.add(cabin);
+var spoiler = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.1, 0.5), darkMat);
+spoiler.position.set(0, 1.25, -2.05); car.add(spoiler);
+[-0.75, 0.75].forEach(function(sx){ var leg = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.45, 0.12), darkMat); leg.position.set(sx, 1.0, -2.05); car.add(leg); });
+var wheelGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.35, 18);
+wheelGeo.rotateZ(Math.PI/2);
+var wheels = [];
+[[-1.05,1.45],[1.05,1.45],[-1.05,-1.45],[1.05,-1.45]].forEach(function(p){ var w = new THREE.Mesh(wheelGeo, darkMat); w.position.set(p[0], 0.42, p[1]); car.add(w); wheels.push(w); });
+var headMat = new THREE.MeshBasicMaterial({color:0xfff6c9});
+[-0.6, 0.6].forEach(function(sx){ var h = new THREE.Mesh(new THREE.BoxGeometry(0.35,0.18,0.1), headMat); h.position.set(sx, 0.72, 3.06); car.add(h); });
+var tails = [];
+[-0.6, 0.6].forEach(function(sx){ var t = new THREE.Mesh(new THREE.BoxGeometry(0.4,0.16,0.1), new THREE.MeshBasicMaterial({color:0x550000})); t.position.set(sx, 0.78, -2.21); car.add(t); tails.push(t); });
+var headBeam = new THREE.SpotLight(0xfff2c0, 1.4, 120, 0.5, 0.4);
+headBeam.position.set(0, 1.2, 2.5); headBeam.target.position.set(0, 0, 60);
+car.add(headBeam); car.add(headBeam.target); scene.add(car);
+function smokeTexture(){
+  var c=document.createElement('canvas'); c.width=c.height=64;
+  var g=c.getContext('2d');
+  var gr=g.createRadialGradient(32,32,2,32,32,30);
+  gr.addColorStop(0,'rgba(200,200,200,.55)'); gr.addColorStop(1,'rgba(200,200,200,0)');
+  g.fillStyle=gr; g.fillRect(0,0,64,64);
+  return new THREE.CanvasTexture(c);
+}
+var smokeTex = smokeTexture(); var smokes = [];
+function spawnSmoke(){
+  if(smokes.length > 60) return;
+  var m = new THREE.Mesh(new THREE.PlaneGeometry(1.6,1.6), new THREE.MeshBasicMaterial({map:smokeTex, transparent:true, opacity:.5, depthWrite:false}));
+  var sx = Math.random()<.5 ? -1.05 : 1.05;
+  m.position.set(sx + (Math.random()-.5)*.4, 0.4, S.x - 1.6 + (Math.random()-.5));
+  m.userData.life = 1; scene.add(m); smokes.push(m);
+}
+var el = function(id){ return document.getElementById(id); };
+var hud=el('hud'), overlay=el('overlay'), ovTitle=el('ov-title'), ovSub=el('ov-sub'), mainBtn=el('main-btn'), rStats=el('result-stats'), scoreBig=el('score-big'), board=el('board');
+var LS_KEY = 'brake_top50_v1';
+function getBoard(){ try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch(e){ return []; } }
+function saveBoard(b){ try{ localStorage.setItem(LS_KEY, JSON.stringify(b.slice(0,50))); }catch(e){} }
+function renderBoard(highlight){
+  var b = getBoard();
+  if(!b.length){ board.innerHTML = '<div style="padding:14px;color:#9fb3d9">暂无成绩，来做第一个上榜的人</div>'; return; }
+  var h = '<table><tr><th>#</th><th>昵称</th><th>初速度</th><th>用时</th><th>得分</th></tr>';
+  b.forEach(function(r,i){ h += '<tr'+(i===highlight?' style="background:rgba(255,183,46,.18)"':'')+'><td>'+(i+1)+'</td><td>'+escapeHtml(r.name)+'</td><td>'+r.v0.toFixed(1)+'</td><td>'+r.t.toFixed(3)+'s</td><td><b>'+r.score+'</b></td></tr>'; });
+  board.innerHTML = h+'</table>';
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function addScore(v0, t, score){
+  var b = getBoard(); var name = '无名车手';
+  if(!b.length || score > (b[0]?b[0].score:0)){ try{ var n = prompt('新纪录！输入你的昵称上榜：', '无名车手'); if(n && n.trim()) name = n.trim().slice(0,12); }catch(e){} }
+  b.push({name:name, v0:v0, t:t, score:score});
+  b.sort(function(a,b2){ return b2.score - a.score; }); saveBoard(b);
+  return b.findIndex(function(r){ return r.score===score && r.name===name; });
+}
+function pressOn(e){ if(e) e.preventDefault(); if(S.phase==='run'||S.phase==='brake') S.braking = true; }
+function pressOff(){ S.braking = false; }
+window.addEventListener('keydown', function(e){ if(e.code==='Space'){ pressOn(e); } if(e.code==='Enter' && !overlay.classList.contains('hidden')) mainBtn.click(); });
+window.addEventListener('keyup', function(e){ if(e.code==='Space') pressOff(); });
+window.addEventListener('mousedown', function(e){ if(e.button===0) pressOn(); });
+window.addEventListener('mouseup', pressOff);
+window.addEventListener('touchstart', function(e){ pressOn(e); }, {passive:false});
+window.addEventListener('touchend', pressOff);
+window.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+document.addEventListener('gesturestart', function(e){ e.preventDefault(); });
+mainBtn.addEventListener('click', function(){ if(S.phase==='ready' || S.phase==='win' || S.phase==='fail_brake' || S.phase==='fail_crash') startRun(); });
+function startRun(){
+  S.phase='run'; S.x=0; S.v=0; S.force=0; S.braking=false; S.tBrake=0; S.v0=0; S.xBrakeStart=0; S.maxForce=0; S.shake=0; S.flipT=0;
+  car.rotation.set(0,0,0); car.position.y=0;
+  tails.forEach(function(t){ t.material.color.setHex(0x550000); });
+  overlay.classList.add('hidden'); hud.classList.remove('hidden');
+  el('hint').innerHTML = '按住 <b>空格</b> / <b>鼠标左键</b> 踩刹车（100 km/h 后可用）';
+}
+function endWin(){
+  S.phase='win';
+  var v0kmh = S.v0*3.6;
+  var score = Math.round(v0kmh*v0kmh / S.tBrake);
+  var dist = S.x - S.xBrakeStart;
+  var idx = addScore(v0kmh, S.tBrake, score);
+  showResult('完美刹停！', '稳稳停住，毫发无损', '刹车初速度 <b>'+v0kmh.toFixed(1)+' km/h</b><br>刹停用时 <b>'+S.tBrake.toFixed(3)+' s</b><br>制动距离 <b>'+dist.toFixed(1)+' m</b><br>最大踏板力 <b>'+Math.round(S.maxForce)+' N</b>', score, idx);
+}
+function endFailBrake(){ S.phase='fail_brake'; S.flipT=0.0001; S.shake=1; flash(); showResult('踏板断裂！', '力度超过 1612 N，刹车踏板断了，整车翻滚', '', null, -1); }
+function endFailCrash(){ S.phase='fail_crash'; S.shake=1; flash(); showResult('撞上路障！', '没能在路障前停住', '', null, -1); }
+function flash(){ var f = el('flash'); f.style.transition='none'; f.style.opacity='0.7'; requestAnimationFrame(function(){ f.style.transition='opacity .5s'; f.style.opacity='0'; }); }
+function showResult(title, desc, stats, score, highlight){
+  setTimeout(function(){
+    ovTitle.textContent = title; ovSub.innerHTML = desc;
+    if(stats){ rStats.innerHTML = stats; rStats.classList.remove('hidden'); } else rStats.classList.add('hidden');
+    if(score!==null){ scoreBig.textContent = '得分 ' + score; scoreBig.classList.remove('hidden'); } else scoreBig.classList.add('hidden');
+    renderBoard(highlight); board.classList.remove('hidden');
+    mainBtn.textContent = '再来一局';
+    overlay.classList.remove('hidden'); hud.classList.add('hidden');
+  }, 900);
+}
+var clock = new THREE.Clock();
+function tick(){
+  requestAnimationFrame(tick);
+  var dt = Math.min(clock.getDelta(), 0.05);
+  if(S.phase==='run' || S.phase==='brake'){
+    var powerCut = S.braking && S.v > BRAKE_MIN_V;
+    if(!powerCut){ var a = 14 * Math.max(0, 1 - S.v/80); S.v += a * dt; }
+    else { if(S.phase==='run'){ S.phase='brake'; S.v0=S.v; S.xBrakeStart=S.x; S.tBrake=0; el('hint').innerHTML = '刹车中——力度会越按越大，<b>1612 N</b> 会断！'; } }
+    if(S.phase==='brake') S.tBrake += dt;
+    if(S.braking && S.phase==='brake'){ S.force += FORCE_RAMP * dt; if(S.force > S.maxForce) S.maxForce = S.force; if(S.force >= FORCE_MAX){ endFailBrake(); } }
+    else { S.force = Math.max(0, S.force - FORCE_DECAY*dt); }
+    if(S.phase==='brake' && S.force > 0){ S.v -= S.force * DECEL_K * dt; if(S.force > 500 && Math.random()<.6) spawnSmoke(); }
+    S.v -= S.v * 0.02 * dt;
+    if(S.v < 0.3 && S.phase==='brake' && S.force < 50){ S.v = 0; endWin(); }
+    if(S.v < 0) S.v = 0;
+    S.x += S.v * dt;
+    var remain = TRACK_LEN - S.x;
+    if(remain <= 0 && S.v > 0.5){ endFailCrash(); }
+    if(remain < 0) S.x = TRACK_LEN;
+    el('speed').textContent = Math.round(S.v*3.6);
+    el('dist').textContent = Math.max(0,Math.round(remain)) + 'm';
+    el('brake-time').textContent = S.tBrake.toFixed(3)+'s';
+    el('force-n').textContent = Math.round(S.force);
+    el('force-bar').style.width = Math.min(100, S.force/FORCE_MAX*100) + '%';
+    tails.forEach(function(t){ t.material.color.setHex(S.braking && S.phase==='brake' ? 0xff2222 : 0x550000); });
+  }
+  if(S.phase==='fail_brake' && S.flipT > 0){
+    S.flipT += dt; var k = Math.min(1, S.flipT/1.2);
+    car.rotation.z = k * Math.PI * 1.5; car.rotation.x = k * 0.6; car.position.y = Math.sin(k*Math.PI) * 2;
+    if(S.shake>0) S.shake = Math.max(0, S.shake - dt*1.2);
+  }
+  var wSpin = S.v * dt / 0.42;
+  wheels.forEach(function(w){ w.rotation.x += wSpin; });
+  for(var i=smokes.length-1;i>=0;i--){ var m = smokes[i]; m.userData.life -= dt*1.4; m.position.y += dt*1.2; m.scale.setScalar(1 + (1-m.userData.life)*1.6); m.material.opacity = Math.max(0, m.userData.life)*.45; if(m.userData.life<=0){ scene.remove(m); m.material.dispose(); smokes.splice(i,1); } }
+  var shakeX = 0, shakeY = 0;
+  if(S.shake>0){ shakeX = (Math.random()-.5)*S.shake*1.2; shakeY = (Math.random()-.5)*S.shake*0.8; }
+  camera.position.set(shakeX, 4.6+shakeY, S.x - 10);
+  camera.lookAt(shakeX, 1.2, S.x + 12);
+  var targetFov = 62 + Math.min(18, S.v*0.22);
+  camera.fov += (targetFov - camera.fov)*Math.min(1, dt*4);
+  camera.updateProjectionMatrix();
+  barrierGlow.intensity = 1 + Math.sin(performance.now()*0.008)*0.5;
+  renderer.render(scene, camera);
+}
+tick();
+window.addEventListener('resize', function(){ W = window.innerWidth; H = window.innerHeight; camera.aspect = W/H; camera.updateProjectionMatrix(); renderer.setSize(W, H); });
+renderBoard(-1);
+if(getBoard().length){ board.classList.remove('hidden'); }
+})();
+</script>
+</body>
+</html>
