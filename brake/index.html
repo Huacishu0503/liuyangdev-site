@@ -78,14 +78,18 @@ canvas{display:block}
 #board td:first-child{color:var(--gold);font-variant-numeric:tabular-nums}
 #board tr.me td{background:rgba(243,200,106,.12);color:var(--gold)}
 #board .empty{padding:16px;color:var(--muted);font-size:12px}
+.board-title{font-size:10px;letter-spacing:.12em;color:var(--muted);padding:8px 10px 7px;border-bottom:1px solid var(--line);text-align:left}
 
-/* back link + audio */
-.top-link{position:fixed;top:max(14px,env(safe-area-inset-top));left:18px;z-index:25;font-size:11px;letter-spacing:.1em;color:#8493ae;text-decoration:none;padding:6px 10px;border:1px solid var(--line);border-radius:2px;background:rgba(8,14,30,.5);transition:color .2s,border-color .2s}
+/* 返回链接：游戏进行中隐藏，避免压住 HUD */
+.top-link{position:fixed;top:max(14px,env(safe-area-inset-top));left:18px;z-index:25;font-size:11px;letter-spacing:.1em;color:#8493ae;text-decoration:none;padding:6px 10px;border:1px solid var(--line);border-radius:2px;background:rgba(8,14,30,.5);transition:color .2s,border-color .2s,opacity .2s}
 .top-link:hover{color:var(--gold);border-color:rgba(243,200,106,.5)}
-#sound{position:fixed;top:max(14px,env(safe-area-inset-top));right:18px;z-index:25;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:rgba(8,14,30,.55);color:#b7c6df;font-size:13px;cursor:pointer;display:none}
-#hud.on ~ #sound{display:block}
+body.playing .top-link{opacity:0;pointer-events:none}
+#sound{position:fixed;top:max(14px,env(safe-area-inset-top));right:18px;z-index:26;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:rgba(8,14,30,.62);color:#b7c6df;font-size:12px;cursor:pointer;display:none;padding:0;line-height:1}
+body.playing #sound{display:block}
 @media(max-width:640px){
-  .hud-top{padding:max(10px,env(safe-area-inset-top)) 12px 0;gap:7px}
+  .hud-top{padding:max(10px,env(safe-area-inset-top)) 12px 0;gap:7px;padding-right:52px}
+  body.playing .hud-top{padding-right:52px}
+  #sound{width:28px;height:28px;font-size:11px;right:12px;top:max(10px,env(safe-area-inset-top))}
   .hud-box{padding:6px 9px}
   .hud-label{font-size:9px;letter-spacing:.1em}
   .hud-value{font-size:16px}
@@ -387,6 +391,7 @@ function reset(){
 function startRun(){
   reset(); S.phase='run';
   overlay.classList.add('hidden'); hud.classList.add('on');
+  document.body.classList.add('playing');
   hint.innerHTML='按住 <b>空格</b> / <b>屏幕</b> 踩刹车（100 km/h 后可用）';
   audioInit();
 }
@@ -468,6 +473,7 @@ function showResult(title,desc,stats,score,submittable){
     }
     renderBoard(-1); board.classList.add('hidden');
     mainBtn.textContent='再来一局';
+    document.body.classList.remove('playing');
     overlay.classList.remove('hidden'); hud.classList.remove('on');
   }, 780);
 }
@@ -482,8 +488,9 @@ function esc(s){ return String(s).replace(/[&<>"']/g,function(c){
   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function renderBoard(highlight){
   var b=getBoard();
-  if(!b.length){ board.innerHTML='<div class="empty">还没有成绩，来做第一个上榜的人。</div>'; return; }
-  var h='<table><tr><th>#</th><th>昵称</th><th>初速度</th><th>用时</th><th>得分</th></tr>';
+  var head='<div class="board-title">本机排行榜 · 只保存在这台设备</div>';
+  if(!b.length){ board.innerHTML=head+'<div class="empty">还没有成绩，来做第一个上榜的人。</div>'; return; }
+  var h=head+'<table><tr><th>#</th><th>昵称</th><th>初速度</th><th>用时</th><th>得分</th></tr>';
   b.forEach(function(r,i){
     h+='<tr'+(i===highlight?' class="me"':'')+'><td>'+(i+1)+'</td><td>'+esc(r.name)+'</td><td>'+
        Number(r.v0).toFixed(1)+'</td><td>'+Number(r.t).toFixed(3)+'s</td><td>'+r.score+'</td></tr>';
