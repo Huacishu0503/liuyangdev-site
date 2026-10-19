@@ -521,9 +521,22 @@ boardBtn.addEventListener('click',function(){
 });
 
 /* ---------------- 输入 ---------------- */
-function pressOn(e){ if(e&&e.cancelable) e.preventDefault();
-  if(S.phase==='run'||S.phase==='brake') S.braking=true; }
-function pressOff(){ S.braking=false; }
+function pressOn(e){
+  // 只有比赛进行中才拦截默认行为；否则按钮的合成 click 会被吞掉，导致手机上点不了 GO
+  if(S.phase!=='run' && S.phase!=='brake') return;
+  var t=e&&e.target;
+  if(t && t.closest && t.closest('button,input,a,form,#overlay')) return;
+  if(e&&e.cancelable) e.preventDefault();
+  S.braking=true;
+}
+function pressOff(e){
+  S.braking=false;
+  // 只在比赛中吞掉 touchend 默认行为（防滚动/长按菜单）；否则会连带取消按钮的合成 click
+  if(e && (S.phase==='run'||S.phase==='brake')){
+    var t=e.target;
+    if(!(t && t.closest && t.closest('button,input,a,form'))) { if(e.cancelable) e.preventDefault(); }
+  }
+}
 addEventListener('keydown',function(e){
   if(e.code==='Space'){ e.preventDefault(); pressOn(null); }
   if(e.code==='Enter' && !overlay.classList.contains('hidden')) mainBtn.click();
@@ -532,7 +545,7 @@ addEventListener('keyup',function(e){ if(e.code==='Space') pressOff(); });
 addEventListener('mousedown',function(e){ if(e.button===0) pressOn(e); });
 addEventListener('mouseup',pressOff);
 addEventListener('touchstart',function(e){ pressOn(e); },{passive:false});
-addEventListener('touchend',function(e){ e.preventDefault(); pressOff(); },{passive:false});
+addEventListener('touchend',pressOff,{passive:false});
 addEventListener('touchcancel',pressOff);
 addEventListener('blur',pressOff);
 document.addEventListener('contextmenu',function(e){ if(S.phase==='run'||S.phase==='brake') e.preventDefault(); });
