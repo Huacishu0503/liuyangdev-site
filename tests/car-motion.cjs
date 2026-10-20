@@ -9,11 +9,16 @@ const path = require('node:path');
     const errors=[];
     page.on('pageerror', e=>errors.push(e.message));
     const fs=require('node:fs');
-    const target=process.argv[2] || 'https://liuyangdev.site/brake/?motion-local=1';
+    const target=process.argv[2] || 'https://liuyangdev.site/?motion-local=1';
     await page.route('**/*',async route=>{
-      if(route.request().resourceType()!=='document') return route.continue();
+      if(route.request().resourceType()!=='document') {
+        if(process.argv[2]) return route.continue();
+        const asset=path.join(path.resolve(__dirname,'..'),new URL(route.request().url()).pathname);
+        if(fs.existsSync(asset)) return route.fulfill({path:asset});
+        return route.continue();
+      }
       const response=process.argv[2] ? await route.fetch() : null;
-      let html=response ? await response.text() : fs.readFileSync(path.resolve(__dirname,'../brake/index.html'),'utf8');
+      let html=response ? await response.text() : fs.readFileSync(path.resolve(__dirname,'../index.html'),'utf8');
       html=html.replace('renderBoard(-1);\ntick();','window.__motionScene=scene; window.__motionCamera=camera;\nrenderBoard(-1);\ntick();');
       await route.fulfill({status:200,contentType:'text/html',body:html});
     });
