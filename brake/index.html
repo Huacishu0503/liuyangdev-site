@@ -583,6 +583,9 @@ function tick(){
     }
   }
 
+  // 将物理位置同步到车模型；只更新前进轴，保留翻车时的高度与旋转。
+  car.position.z=S.x;
+
   if(S.phase==='snap' && S.flip>0){
     S.flip+=dt; var k=Math.min(1,S.flip/1.15);
     car.rotation.z=k*Math.PI*1.5; car.rotation.x=k*.62;
