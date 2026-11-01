@@ -1,0 +1,16 @@
+{
+  "url": "https://our-story-romantic-trial.liuyang-our-story.workers.dev",
+  "published_albums": 10,
+  "published_photos": 1291,
+  "production_dns_changed": false,
+  "dns_diagnostic_override_used": true,
+  "public_snapshots_match": true,
+  "assets_checked": 1317,
+  "checksums_sampled": 25,
+  "private_paths_not_published": true,
+  "existing_password_login": true,
+  "upload_publish_delete_workflow": true,
+  "original_public_albums_unchanged_after_test": true,
+  "desktop_direct_access": false,
+  "phone_network_test_pending": true
+}

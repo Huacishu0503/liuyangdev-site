@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "our-story-romantic-trial",
+  "main": "src/worker.mjs",
+  "compatibility_date": "2026-07-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/api",
+      "/api/*",
+      "/uploads/*"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "our-story-trial",
+      "database_id": "d79ec830-65fd-4be9-9bd0-8189b493ae1f",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [],
+  "observability": {
+    "enabled": false
+  }
+}
