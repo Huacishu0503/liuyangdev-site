@@ -1,0 +1,11 @@
+{
+  "url": "https://liuyangdev.site/#home",
+  "header_lock_button_removed": true,
+  "each_travel_entry_requires_password": true,
+  "wrong_password_stays_home": true,
+  "correct_password_shows_albums": true,
+  "home_then_reentry_prompts_again": true,
+  "published_albums": 10,
+  "published_photos": 1291,
+  "version": "6236415f-386d-478d-acdf-e52a8e49a916"
+}

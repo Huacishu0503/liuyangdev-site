@@ -1,0 +1,253 @@
+@charset "UTF-8";
+/* The atlas has its own page rhythm; the home page keeps its compact layout. */
+html.is-memories{height:auto;min-height:100%;overflow:auto;scroll-behavior:smooth}
+html.is-memories:has(body.modal-open){overflow:hidden}
+body[data-view=memories]{height:auto;min-height:100dvh;overflow:visible;display:block;background-color:#f7f4eb;background-image:radial-gradient(#bfa98a30 .7px,transparent .7px);background-size:10px 10px;padding-bottom:108px}
+body.modal-open{overflow:hidden}
+body[data-view=memories].modal-open{overflow:hidden}
+body[data-view=memories] .app-header{width:min(1240px,calc(100% - 96px));height:100px;margin:auto;border-bottom:1px solid #d9cfbd}
+body[data-view=memories] .brand{font-size:19px;letter-spacing:1px}
+body[data-view=memories] .brand-icon{width:40px;height:44px;background:#e9e7d6;border:1px solid #9da28a;box-shadow:none;border-radius:15px;color:#666f54}
+body[data-view=memories] .brand small{font-size:9px;color:#928878}
+body[data-view=memories] .date-button{box-shadow:none;border-width:1px;font-size:12px;padding:10px 17px;background:#fffdf7;border-color:#d7cbb7;color:#78654e}
+body[data-view=memories] .upload-entry{background:#e6e9dc;border-color:#b8c0a7;color:#626f50}
+body[data-view=memories] .page-doodle{display:none}
+body[data-view=memories] .app-window{width:min(1240px,calc(100% - 96px));height:auto;max-height:none;overflow:visible;margin:auto;border:0;border-radius:0;box-shadow:none;background:none}
+body[data-view=memories] .memories-view{height:auto;display:block;padding:0;background:none}
+.memories-view .memory-heading{display:grid;grid-template-columns:1fr 280px;gap:60px;text-align:left;align-items:center;padding:57px 0 44px}
+.memory-kicker{display:flex;align-items:center;gap:10px;font:10px/1.5 "Trebuchet MS",sans-serif;letter-spacing:2.2px;color:#7c836b;margin:0 0 20px}
+.memory-kicker>span{width:22px;height:1px;background:#929b7b}
+.memories-view .memory-heading h1{font-family:"Noto Serif SC","Songti SC","STSong","SimSun",serif;font-weight:400;font-size:clamp(36px,3.5vw,52px);line-height:1.45;letter-spacing:2px;color:#423e33;margin:0}
+.memories-view .memory-heading h1>span{font:inherit;margin:0;color:inherit}
+.memories-view .memory-heading h1 .memory-accent{color:#788267}
+.memory-intro{font-size:13px;line-height:2;color:#8b8374;letter-spacing:1px;margin:20px 0 0}
+.memory-aside{text-align:center;padding:10px 0 4px;position:relative;align-self:end}
+.memory-flower{display:block;font:74px/1 Georgia,serif;color:#a6ae8b;transform:rotate(14deg);margin:0 0 5px}
+.memory-handwriting{font:italic 20px/1.5 Georgia,serif;color:#918870;margin:12px 0 25px;transform:rotate(-6deg)}
+.memory-stats{display:flex;justify-content:center;gap:30px;border-top:1px solid #d9cfbd;padding:20px 0 0}
+.memory-stats>div{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.memory-stats>div+div{border-left:1px solid #d9cfbd;padding-left:30px}
+.memory-stats strong{font:32px/1 Georgia,serif;color:#686c57;font-variant-numeric:tabular-nums}
+.memory-stats span{font-size:10px;letter-spacing:1px;color:#938b7a}
+.memories-view .memories-toolbar{width:100%;display:flex;justify-content:flex-start;align-items:center;gap:26px;margin:5px 0 26px;padding-top:24px;border-top:1px solid #d9cfbd}
+.collection-title{margin-right:auto;flex-shrink:0}
+.collection-title>span{font:9px "Trebuchet MS",sans-serif;letter-spacing:1.6px;color:#a19581}
+.collection-title h2{font-size:17px;font-weight:400;letter-spacing:2px;color:#5d5749;margin:7px 0 0}
+.memories-view .filters{gap:4px;flex-wrap:wrap}
+.memories-view .filter{font-size:12px;padding:8px 15px;min-height:36px;border:1px solid transparent;color:#958a77;transition:background .2s,color .2s}
+.memories-view .filter[aria-pressed=true]{border-color:#8f9b7d;color:#f9f8f1;background:#7e8b6e}
+.memories-view .filter:hover:not([aria-pressed=true]){background:#e8e8da;color:#687455}
+.memories-view .archive-label{font-size:10px;letter-spacing:1px;color:#a29680;padding-left:20px;border-left:1px solid #d9cfbd}
+.memories-view .trip-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;height:auto;gap:34px 30px;align-items:start}
+.memories-view .trip-card{height:auto;min-height:0;display:block;padding:10px 10px 0;background:#fffdf8;border:1px solid #e2dccd;border-radius:5px;box-shadow:0 3px 6px #69573605;transform:none;text-align:left;transition:box-shadow .3s,transform .3s;animation:atlasIn .5s both;animation-delay:calc(var(--card-order,0)*55ms)}
+.memories-view .trip-card:hover{transform:translateY(-4px);box-shadow:0 14px 28px #62533c12}
+.memories-view .trip-card:before{display:none}
+.memories-view .trip-visual{height:clamp(220px,24vw,310px);display:grid;grid-template-columns:minmax(0,2.6fr) minmax(0,1fr);gap:6px;overflow:hidden;border-radius:2px;background:#eae4d6;position:relative}
+.memories-view .trip-visual.single-cover{grid-template-columns:1fr}
+.trip-cover{height:100%;min-width:0;overflow:hidden;position:relative}
+.trip-peeks{display:grid;grid-template-rows:repeat(2,minmax(0,1fr));gap:6px;min-height:0;overflow:hidden}
+.trip-peeks.single-peek{grid-template-rows:1fr}
+.memories-view .trip-visual img{height:100%;width:100%;min-height:0;object-fit:cover;object-position:50% 38%;transition:transform .7s cubic-bezier(.2,.6,.2,1)}
+.memories-view .trip-cover img{object-position:50% 25%}
+.memories-view .trip-card:hover .trip-cover img{transform:scale(1.035)}
+.memories-view .trip-card:hover .trip-peeks img{transform:none}
+.memories-view .trip-visual:after{inset:70% 0 0;background:linear-gradient(transparent,#27291c44);pointer-events:none}
+.memories-view .trip-number{top:13px;left:13px;font:12px Georgia,serif;z-index:1;color:#fffdf2;border:1px solid #ffffff8c;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#352d2320;backdrop-filter:blur(3px)}
+.memories-view .trip-preview{font-size:10px;letter-spacing:1px;bottom:16px;left:16px;color:#fffef7;text-shadow:0 1px 3px #0008}
+.memories-view .trip-open{font-size:23px;right:14px;bottom:12px;width:34px;height:34px;border:1px solid #ffffff80;border-radius:50%;display:grid;place-items:center;line-height:1;background:#594e3920;backdrop-filter:blur(3px)}
+.memories-view .trip-info{padding:20px 10px 22px;gap:20px;align-items:flex-end}
+.memories-view .trip-info .trip-meta{font-size:10px;letter-spacing:1.4px;margin:0 0 9px;color:#9b947e}
+.memories-view .trip-info h3{font-family:"Noto Serif SC","Songti SC","STSong","SimSun",serif;font-weight:400;font-size:27px;line-height:1.4;letter-spacing:1px;margin:0;color:#514e3e}
+.memories-view .trip-info .trip-subtitle{font-size:11px;letter-spacing:.5px;line-height:1.7;margin:7px 0 0;color:#9a907b}
+.memories-view .trip-category{font-size:10px;color:#8b947b;border:0;border-radius:0;padding:0 0 5px;letter-spacing:.5px}
+.memory-footer{display:flex;align-items:center;gap:12px;margin:39px 0 15px;padding:25px 0;border-top:1px solid #d9cfbd}
+.memory-footer>span{font:25px Georgia,serif;color:#b99885}
+.memories-view .demo-note{font-size:11px;letter-spacing:1px;color:#9b927f;text-align:left}
+.memory-footer>a{margin-left:auto;color:#7e896c;font-size:11px;text-decoration:none;padding:8px 0}
+.memory-footer>a:hover{text-decoration:underline;text-underline-offset:5px}
+body[data-view=memories] .dock{position:fixed;height:72px;bottom:21px;left:50%;transform:translateX(-50%);padding:6px 10px;gap:4px;border:1px solid #d6cbb6;border-radius:22px;background:#fffcf2ed;box-shadow:0 7px 30px #6d5c4320;backdrop-filter:blur(16px);z-index:4}
+body[data-view=memories] .dock-item{width:104px;height:55px;font-size:9px;gap:4px;border-radius:15px;border-width:1px}
+body[data-view=memories] .dock-item>svg{width:20px;height:20px}
+body[data-view=memories] .dock-item[aria-selected=true]{background:#e9eddf;border-color:#c4cbb3;box-shadow:none;color:#6e7d5b;transform:none}
+body[data-view=memories] .music-panel{bottom:110px}
+.album-dialog{width:min(1120px,calc(100% - 48px));height:auto;max-height:calc(100dvh - 56px);padding:32px;border:1px solid #d4c9b6;border-radius:10px;background:#f9f6ed;overflow:auto;scrollbar-width:thin}
+.album-dialog[open]{display:block}
+.album-dialog .album-header{padding:4px 0 26px;margin-bottom:24px;border-bottom:1px solid #ded4c1}
+.album-dialog .album-header .eyebrow{font-size:10px;letter-spacing:2px;color:#879174;margin-bottom:12px}
+.album-dialog .album-header h2{font:400 34px/1.5 "Noto Serif SC","Songti SC","STSong","SimSun",serif;letter-spacing:1px;color:#514e3e;margin:0}
+.album-dialog .album-header p:last-child{font-size:12px;line-height:1.8;color:#9c907d;margin:8px 0 0;display:block}
+.album-dialog .album-header p:last-child:empty{display:none}
+.album-dialog .album-header .icon-button{position:sticky;top:0;background:#ede9dc;color:#7f7865;width:38px;height:38px;margin:0;z-index:2}
+.album-dialog .album-photos{display:block;columns:3;column-gap:16px;margin:0}
+.album-dialog .album-photo{position:relative;display:block;break-inside:avoid;width:100%;height:auto;padding:7px;margin:0 0 16px;border:1px solid #e2d9c6;border-radius:3px;background:#fffdf8;overflow:hidden}
+.album-dialog .album-photo img{display:block;height:auto;width:100%;min-height:0;object-fit:contain;border-radius:1px;background:#eae6d9;transition:filter .3s}
+.album-dialog .album-photo:hover img{filter:brightness(1.04)}
+.album-dialog .album-photo-number{position:absolute;left:16px;top:15px;font:11px Georgia,serif;color:#fff;filter:drop-shadow(0 1px 2px #0009)}
+.album-dialog .album-photo p{font-size:11px;line-height:1.8;color:#958870;margin:10px 5px 5px}
+.album-dialog .album-hint{font-size:10px;color:#a39883;margin:16px 0 0;letter-spacing:1px}
+@keyframes atlasIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:1000px){.memories-view .trip-card:nth-child(even){margin-top:38px}.memories-view .trip-card:nth-child(4n+3){margin-top:-38px}}
+@media(max-width:900px){body[data-view=memories] .app-header,body[data-view=memories] .app-window{width:calc(100% - 56px)}.memories-view .memory-heading{grid-template-columns:1fr 200px;gap:25px;padding:40px 0 32px}.memories-view .memory-heading h1{font-size:36px}.memory-intro{font-size:12px}.memory-aside{padding:0}.memory-flower{font-size:58px}.memory-handwriting{font-size:17px}.memory-stats{gap:20px}.memory-stats>div+div{padding-left:20px}.memory-stats strong{font-size:28px}.memories-view .memories-toolbar{gap:12px}.memories-view .archive-label{display:none}.memories-view .trip-grid{gap:22px}.memories-view .trip-visual{height:220px;grid-template-columns:minmax(0,2.5fr) minmax(0,1fr)}.memories-view .trip-info{padding:15px 5px 18px;gap:8px}.memories-view .trip-info h3{font-size:23px}.memories-view .trip-category{font-size:9px}.album-dialog .album-photos{columns:2}}
+@media(max-width:600px){body[data-view=memories]{padding-bottom:106px}body[data-view=memories] .app-header,body[data-view=memories] .app-window{width:calc(100% - 36px);max-width:none}body[data-view=memories] .app-header{height:77px;gap:12px}body[data-view=memories] .brand{font-size:16px;gap:9px;letter-spacing:0}body[data-view=memories] .brand small{font-size:6px;letter-spacing:.5px}body[data-view=memories] .brand-icon{width:32px;height:36px;border-radius:12px}body[data-view=memories] .brand-icon svg{width:21px;height:21px}body[data-view=memories] .header-actions{gap:6px}body[data-view=memories] .date-button{padding:8px 10px;font-size:10px}body[data-view=memories] #customize{width:34px;height:34px;justify-content:center;padding:8px}body[data-view=memories] #customize>span{display:none}.memories-view .memory-heading{grid-template-columns:1fr;gap:0;padding:34px 2px 25px;position:relative}.memory-kicker{font-size:8px;letter-spacing:1.5px;gap:8px;margin-bottom:18px}.memory-kicker>span{width:16px}.memories-view .memory-heading h1{font-size:clamp(28px,7.5vw,39px);line-height:1.5;letter-spacing:.5px}.memory-intro{font-size:11px;line-height:1.9;margin-top:15px;letter-spacing:.5px}.memory-aside{display:flex;align-items:center;justify-content:flex-end;gap:15px;padding:21px 0 0;text-align:left;align-self:stretch}.memory-flower{font-size:42px;margin:0 auto 0 2px}.memory-handwriting{display:none}.memory-stats{border-top:0;padding:0;gap:22px;justify-content:flex-end}.memory-stats>div{gap:5px}.memory-stats>div+div{padding-left:22px}.memory-stats strong{font-size:27px}.memory-stats span{font-size:9px}.memories-view .memories-toolbar{flex-direction:row;flex-wrap:wrap;align-items:center;gap:12px;padding-top:19px;margin:0 0 20px}.collection-title{width:100%;display:flex;align-items:baseline;justify-content:space-between;gap:10px}.collection-title>span{font-size:8px;letter-spacing:1.3px;order:2}.collection-title h2{font-size:15px;letter-spacing:1px;margin:0}.memories-view .filter{font-size:11px;padding:7px 14px;min-height:33px}.memories-view .archive-label{display:block;margin-left:auto;font-size:9px;padding-left:12px}.memories-view .trip-grid{grid-template-columns:1fr;gap:24px}.memories-view .trip-card{padding:8px 8px 0;border-radius:4px}.memories-view .trip-visual{height:clamp(210px,62vw,330px);gap:5px;grid-template-columns:minmax(0,2.45fr) minmax(0,1fr)}.trip-peeks{gap:5px}.memories-view .trip-number{top:10px;left:10px;font-size:11px;width:27px;height:27px}.memories-view .trip-preview{font-size:9px;left:12px;bottom:13px}.memories-view .trip-open{width:30px;height:30px;font-size:21px;right:10px;bottom:10px}.memories-view .trip-info{padding:17px 7px 19px;gap:12px}.memories-view .trip-info .trip-meta{font-size:9px;margin-bottom:8px}.memories-view .trip-info h3{font-size:25px}.memories-view .trip-info .trip-subtitle{font-size:10px}.memories-view .trip-category{font-size:9px;padding-bottom:5px}.memory-footer{flex-wrap:wrap;gap:9px;margin-top:29px;padding-top:20px}.memories-view .demo-note{font-size:10px;letter-spacing:.5px}.memory-footer>a{font-size:10px;margin:0 0 0 34px;flex-basis:100%}body[data-view=memories] .dock{bottom:max(14px,env(safe-area-inset-bottom));height:65px;gap:2px;padding:5px 7px;border-radius:20px}body[data-view=memories] .dock-item{width:91px;height:52px;font-size:8px;border-radius:14px}body[data-view=memories] .music-panel{bottom:96px}.album-dialog{width:calc(100% - 24px);height:auto;max-height:calc(100dvh - 28px);padding:20px 13px;border-radius:8px}.album-dialog .album-header{padding:2px 4px 19px;margin-bottom:18px;gap:8px}.album-dialog .album-header h2{font-size:27px}.album-dialog .album-header .eyebrow{font-size:9px;letter-spacing:1px;margin-bottom:8px}.album-dialog .album-header p:last-child{font-size:11px}.album-dialog .album-header .icon-button{width:32px;height:32px;font-size:23px}.album-dialog .album-photos{columns:2;column-gap:10px}.album-dialog .album-photo{padding:5px;margin-bottom:10px}.album-dialog .album-photo p{font-size:10px;margin:7px 3px 3px}.album-dialog .album-photo-number{left:12px;top:12px;font-size:10px}.album-dialog .album-hint{font-size:9px;letter-spacing:.3px;line-height:1.7;margin:16px 4px 0}}
+@media(max-width:350px){body[data-view=memories] .brand small{display:none}body[data-view=memories] .brand{font-size:15px}.memories-view .archive-label{display:none}.memories-view .memory-heading h1{font-size:27px}body[data-view=memories] .dock-item{width:83px}.memories-view .trip-info h3{font-size:23px}.memories-view .trip-category{font-size:8px}}
+@media(prefers-reduced-motion:reduce){html.is-memories{scroll-behavior:auto}.memories-view .trip-card{animation:none;transition:none}.memories-view .trip-visual img{transition:none}}
+
+/* A tighter introduction, real keepsakes, and a calmer photo viewer. */
+.memories-view .memory-heading{grid-template-columns:1fr 280px;gap:48px;padding:34px 0 29px}
+.memories-view .memory-heading h1{font-size:clamp(34px,3.1vw,44px);line-height:1.4}
+.memory-kicker{margin-bottom:16px}
+.memory-intro{margin-top:15px;font-size:12px;line-height:1.9}
+.memory-aside{padding:0;align-self:center}
+.memory-prints{position:relative;height:143px;width:230px;margin:0 auto}
+.memory-print{position:absolute;top:5px;left:22px;width:108px;padding:6px 6px 5px;background:#fffcf5;box-shadow:0 5px 12px #4f48351c;border:1px solid #e0d9c7;transform:rotate(-11deg)}
+.memory-print:nth-child(2){left:auto;right:12px;top:0;transform:rotate(10deg)}
+.memory-print img{width:100%;height:104px;object-fit:cover;object-position:50% 25%;filter:saturate(.85)}
+.memory-print span{display:block;font:italic 8px/1.8 Georgia,serif;color:#9b8b70;text-align:center;padding-top:3px;white-space:nowrap}
+.memory-handwriting{font-size:17px;margin:0 0 13px;transform:rotate(-4deg)}
+.memory-stats{padding-top:13px;gap:30px}
+.memory-stats strong{font-size:26px}
+.memory-stats span{font-size:9px}
+.memories-view .trip-grid{gap:28px}
+.memories-view .trip-card{border-color:#e7e1d4;box-shadow:0 4px 16px #4c452f06;border-radius:7px}
+.memories-view .trip-visual{height:clamp(245px,25vw,335px);grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);border-radius:3px}
+.memories-view .trip-cover img{object-position:50% 20%}
+.memories-view .trip-info{padding:18px 12px 21px}
+.memories-view .trip-info h3{font-size:26px}
+.memories-view .trip-category{color:#738164;transition:color .2s}
+.memories-view .trip-card:hover .trip-category{color:#4d6640}
+.memories-view a:focus-visible,.photo-thumbnail:focus-visible,.album-travel-button:focus-visible{outline:2px solid #8b9b73;outline-offset:4px}
+.album-dialog .album-header{position:sticky;top:-32px;padding-top:25px;padding-bottom:20px;margin-top:-25px;background:#f9f6edf5;backdrop-filter:blur(12px);z-index:3}
+.album-navigation{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:0 0 20px;margin-top:-8px}
+.album-navigation>span{font:10px "Trebuchet MS","Microsoft YaHei",sans-serif;letter-spacing:1px;color:#a0957f}
+.album-navigation>div{display:flex;gap:8px}
+.album-travel-button{font-size:11px;min-height:34px;padding:5px 12px;border:1px solid #d7cdb9;border-radius:20px;color:#7a836b;background:#fffcf5}
+.album-travel-button:hover:not(:disabled){background:#e9eddf;border-color:#a9b196}
+.lightbox figure{padding-bottom:150px}
+.lightbox figure img{max-height:calc(100dvh - 240px);border-radius:3px}
+.lightbox figcaption{font-size:12px;letter-spacing:1px;margin-top:15px}
+.photo-thumbnails{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:flex-start;gap:9px;width:max-content;max-width:calc(100% - 140px);padding:7px 10px;border:1px solid #d4c4aa22;border-radius:13px;background:#ffffff09;overflow:auto;scrollbar-width:thin;scrollbar-color:#c8b59355 transparent;overscroll-behavior:contain}
+.photo-thumbnail{position:relative;flex:0 0 50px;width:50px;height:52px;padding:3px;border:1px solid transparent;border-radius:6px;opacity:.45;transition:opacity .2s,border-color .2s}
+.photo-thumbnail img{height:100%;width:100%;object-fit:cover;border-radius:3px}
+.photo-thumbnail:hover{opacity:.85}
+.photo-thumbnail[aria-current=true]{border-color:#dfd5b8;opacity:1;background:#d8c4a515}
+.lightbox-hint{bottom:17px;font-size:9px;letter-spacing:1px}
+@media(min-width:1000px){.memories-view .trip-card:nth-child(even){margin-top:24px}.memories-view .trip-card:nth-child(4n+3){margin-top:-24px}}
+@media(max-width:900px){.memories-view .memory-heading{grid-template-columns:1fr 220px;gap:24px;padding:28px 0}.memories-view .memory-heading h1{font-size:35px}.memory-prints{width:200px;height:131px}.memory-print{width:96px;left:16px}.memory-print img{height:93px}.memory-print:nth-child(2){right:6px}.memories-view .trip-visual{height:255px;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr)}.memories-view .trip-info{padding:16px 7px 18px}.memories-view .trip-info h3{font-size:23px}}
+@media(max-width:600px){.memories-view .memory-heading{grid-template-columns:1fr;gap:0;padding:25px 2px 23px}.memories-view .memory-heading h1{font-size:clamp(27px,7.4vw,35px);line-height:1.45}.memory-kicker{margin-bottom:14px}.memory-intro{font-size:11px;margin-top:13px;line-height:1.85}.memory-prints{display:none}.memory-aside{padding:20px 0 0;gap:12px;justify-content:space-between}.memory-handwriting{display:block;max-width:100px;font-size:15px;line-height:1.5;text-align:left;margin:0 14px 0 0}.memory-stats{padding:0;gap:18px}.memory-stats>div+div{padding-left:18px}.memory-stats strong{font-size:25px}.memory-stats span{font-size:8px;letter-spacing:.5px}.memories-view .trip-grid{gap:22px}.memories-view .trip-visual{height:clamp(225px,70vw,320px);grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}.memories-view .trip-info{padding:16px 8px 18px}.memories-view .trip-info h3{font-size:24px}.memories-view .trip-category{font-size:9px}.album-dialog .album-header{top:-20px;padding-top:22px;padding-bottom:18px;margin-top:-20px}.album-navigation{padding:0 3px 18px;gap:8px}.album-navigation>span{font-size:8px;letter-spacing:.3px}.album-navigation>div{gap:5px}.album-travel-button{font-size:10px;padding:5px 9px;min-height:33px}.lightbox figure{padding:65px 14px 165px}.lightbox figure img{max-height:calc(100dvh - 255px)}.lightbox figcaption{font-size:11px;line-height:1.7;margin-top:13px}.photo-thumbnails{bottom:54px;gap:6px;max-width:calc(100% - 32px);padding:5px 7px;border-radius:10px}.photo-thumbnail{flex-basis:41px;width:41px;height:45px;padding:2px;border-radius:4px}.photo-thumbnail img{border-radius:2px}.lightbox .photo-arrow{bottom:12px;width:34px;height:34px}.lightbox .previous{left:16px}.lightbox .next{right:16px}.lightbox-hint{bottom:23px;font-size:7px;left:57px;right:57px;letter-spacing:.4px}}
+@media(max-width:350px){.memory-handwriting{font-size:13px;max-width:85px}.memory-stats{gap:12px}.memory-stats>div+div{padding-left:12px}.album-navigation>span{max-width:105px;line-height:1.7}.memories-view .trip-info h3{font-size:22px}}
+@media(prefers-reduced-motion:reduce){.photo-thumbnail{transition:none}}
+
+/* Open each collection as a letter, then follow its little chapters. */
+body[data-view=memories]{background-color:#faf3ed;background-image:radial-gradient(ellipse at 10% 8%,#efd6cf40,transparent 46%),radial-gradient(#bc9f8e26 .65px,transparent .65px);background-size:auto,12px 12px}
+.memories-view .memory-heading h1{color:#65504a}
+.memories-view .memory-heading h1 .memory-accent{color:#b3837d}
+.memory-kicker,.memory-stats strong{color:#9b7970}
+.memory-print{box-shadow:0 6px 20px #9869531c}
+.memories-view .filter[aria-pressed=true]{background:#a28276;border-color:#a28276;color:#fffcf6}
+.memories-view .trip-card{padding:12px 12px 0;box-shadow:0 5px 18px #916f590b;border-color:#e5d2c4;background:#fffbf5;overflow:visible}
+.memories-view .trip-card:before{display:block;width:58px;height:17px;top:-8px;left:calc(50% - 29px);background:#dac3ae99;transform:rotate(-3deg);border:1px solid #d2b79a33}
+.memories-view .trip-info{padding:20px 10px 24px;align-items:center}
+.memories-view .trip-info h3{color:#71574e}
+.memories-view .trip-info .trip-letter-line{font-family:"Noto Serif SC","Songti SC","STSong","SimSun",serif;font-size:12px;line-height:1.9;color:#a08a7d;margin:10px 0 0;letter-spacing:.5px}
+.memories-view .trip-category{color:#ad8077;padding-bottom:6px;border-bottom:1px solid #d7b3a6;font-size:11px;letter-spacing:1px;line-height:1.7;white-space:nowrap}
+.memories-view .trip-card:hover .trip-category{color:#946159}
+.album-dialog{background:#fbf5eb;border-color:#d7bda9;max-width:1060px}
+.album-dialog .album-header{background:#fbf5ebf5;border-bottom-color:#e6d5c3}
+.album-dialog .album-header h2{color:#7b5a51}
+.album-dialog .album-header .eyebrow{color:#b18e7d}
+.album-dialog .album-header .icon-button{background:#eee0d0;color:#927969}
+.letter-arrival{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:52px;align-items:center;padding:34px 42px 40px;min-height:440px;background:linear-gradient(135deg,#fffcf6,#f8eee0);border:1px solid #ead8c2;border-radius:4px;box-shadow:0 7px 25px #956a4310;isolation:isolate}
+.letter-arrival:after{content:"";position:absolute;inset:10px;border:1px solid #cfb28b25;pointer-events:none;z-index:-1}
+.letter-postcard{position:relative;max-width:290px;width:100%;justify-self:center;padding:11px 11px 16px;background:#fffef9;border:1px solid #e5d6bf;box-shadow:0 8px 17px #7153391c;transform:rotate(-4deg);transition:transform .7s ease}
+.letter-postcard>img{display:block;width:100%;height:287px;object-fit:contain;object-position:center;background:#eee5d6}
+.postcard-caption{display:block;font:italic 14px/1.5 Georgia,serif;color:#a58b73;text-align:center;margin-top:15px}
+.letter-tape{position:absolute;top:-12px;left:calc(50% - 35px);width:70px;height:23px;background:#d4bda77a;border:1px solid #ccb29a30;transform:rotate(4deg)}
+.letter-message{position:relative;padding:14px 0;z-index:1}
+.letter-address{font:10px/1.5 "Trebuchet MS","Microsoft YaHei",sans-serif;letter-spacing:2px;color:#b79b85;margin:0 0 25px}
+.letter-message h3{font:400 29px/1.7 "Noto Serif SC","Songti SC","STSong","SimSun",serif;color:#90645b;letter-spacing:1px;margin:0 0 20px}
+#letter-intro{font-family:"Noto Serif SC","Songti SC","STSong","SimSun",serif;font-size:14px;line-height:2.4;letter-spacing:.8px;color:#9d8571;white-space:pre-line;margin:0;overflow-wrap:anywhere}
+.letter-signature{font:italic 13px/1.8 "Noto Serif SC","Songti SC","SimSun",serif;color:#b18e79;margin:25px 0}
+.letter-seal{display:inline-flex;align-items:center;gap:13px;min-height:46px;padding:9px 17px 9px 9px;border:1px solid #ceafa0;border-radius:28px;background:#f6e5d9;color:#94695e;font-size:12px;letter-spacing:1px;box-shadow:0 3px 9px #9c6e5210;transition:transform .3s,background .3s}
+.letter-seal:hover{background:#f0d7c8;transform:translateY(-2px)}
+.letter-seal>span:first-child{display:grid;place-items:center;width:32px;height:32px;border:1px solid #bc8b80;border-radius:50%;background:#c59185;color:#fff4e9;font:22px Georgia,serif;box-shadow:inset 0 0 0 3px #e6b7a65c}
+.letter-seal>span:last-child{font-size:18px;margin-left:4px}
+.letter-postmark{position:absolute;right:19px;top:17px;width:65px;height:65px;border:2px solid #bb8c7355;border-radius:50%;display:grid;place-content:center;gap:1px;text-align:center;font:7px/1.6 "Trebuchet MS",sans-serif;letter-spacing:1px;color:#bb8c7377;transform:rotate(17deg);pointer-events:none}
+.letter-arrival.is-opened .letter-postcard{transform:rotate(-1deg)}
+#letter-open-note{font:italic 12px "Noto Serif SC","Songti SC","SimSun",serif;color:#b69b86;margin-top:22px}
+.album-story{padding:35px 0 0}
+.album-story:focus{outline:none}
+.album-story .album-navigation{padding:0 4px 23px;margin:0;border-bottom:1px solid #e7d5be}
+.album-dialog .album-photos{columns:auto;display:block;margin:0}
+.story-chapter{padding:40px 10px 45px;border-bottom:1px solid #e8dac5}
+.chapter-heading{position:relative;text-align:center;margin:0 0 30px}
+.chapter-heading>span{font:9px/1.8 "Trebuchet MS",sans-serif;letter-spacing:3px;color:#bf9f86}
+.chapter-heading h3{font:400 23px/1.8 "Noto Serif SC","Songti SC","STSong","SimSun",serif;letter-spacing:2px;color:#947766;margin:8px 0 0}
+.chapter-heading:after{content:"♡";display:block;font:18px Georgia,serif;color:#cd9d90;margin:12px auto 0}
+.chapter-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;gap:27px 30px;max-width:880px;margin:0 auto}
+.album-dialog .chapter-photos .album-photo{width:100%;height:auto;margin:0;padding:10px 10px 13px;border:1px solid #e4d5be;background:#fffdf6;box-shadow:0 5px 15px #8d634311;border-radius:2px;transform:rotate(-1deg);transition:transform .35s,box-shadow .35s}
+.album-dialog .chapter-photos .album-photo:nth-child(even){transform:rotate(1.5deg);margin-top:25px}
+.album-dialog .chapter-photos .album-photo:hover{transform:rotate(0) translateY(-3px);box-shadow:0 9px 23px #8d63431a}
+.album-dialog .chapter-photos .album-photo:last-child:nth-child(odd){grid-column:1/-1;width:65%;justify-self:center;transform:rotate(-1.5deg);margin-top:8px}
+.album-dialog .chapter-photos .album-photo img{height:auto;max-height:none;object-fit:contain}
+.album-dialog .chapter-photos .album-photo-number{left:19px;top:17px}
+.album-dialog .chapter-photos .album-photo p{color:#a78d77;font-family:"Noto Serif SC","Songti SC","STSong","SimSun",serif;line-height:1.9;margin:12px 4px 0}
+.story-ending{text-align:center;padding:43px 10px 19px;color:#a68b77}
+.story-ending>span{font:33px Georgia,serif;color:#c9988c}
+.story-ending p{font:15px/2 "Noto Serif SC","Songti SC","STSong","SimSun",serif;letter-spacing:1px;margin:16px 0 8px}
+.story-ending small{font:italic 15px Georgia,serif;color:#ba9f8b}
+@media(max-width:900px){.letter-arrival{padding:25px;gap:30px;min-height:420px}.letter-postcard{max-width:260px}.letter-postcard>img{height:260px}.letter-message h3{font-size:25px}#letter-intro{font-size:13px}.letter-postmark{width:53px;height:53px;right:11px;top:11px;font-size:6px}.chapter-photos{gap:22px}.chapter-heading h3{font-size:21px}}
+@media(max-width:600px){.memories-view .trip-card{padding:9px 9px 0}.memories-view .trip-info{align-items:flex-start;padding:18px 7px 22px;gap:12px}.memories-view .trip-info .trip-letter-line{font-size:11px;letter-spacing:0;line-height:1.8;max-width:215px}.memories-view .trip-category{font-size:10px;letter-spacing:.5px;margin-top:7px}.memories-view .trip-info h3{font-size:23px}.memories-view .memory-heading h1{font-size:31px}.letter-arrival{grid-template-columns:1fr;gap:23px;padding:28px 22px 30px;min-height:0}.letter-postcard{max-width:210px;padding:8px 8px 12px;transform:rotate(-3deg)}.letter-postcard>img{height:199px}.postcard-caption{font-size:11px;margin-top:11px}.letter-tape{height:20px;width:58px;left:calc(50% - 29px);top:-10px}.letter-message{text-align:center;padding:0}.letter-address{font-size:8px;letter-spacing:1.5px;margin-bottom:15px}.letter-message h3{font-size:24px;line-height:1.7;margin-bottom:13px}#letter-intro{font-size:12px;line-height:2.1;letter-spacing:.3px}.letter-signature{font-size:11px;margin:18px 0}.letter-seal{min-height:44px;font-size:11px;padding:7px 15px 7px 8px;gap:11px}.letter-postmark{width:49px;height:49px;font-size:5px;top:14px;right:12px}.album-story{padding-top:24px}.album-story .album-navigation{padding-bottom:18px}.story-chapter{padding:28px 1px 34px}.chapter-heading{margin-bottom:22px}.chapter-heading>span{font-size:8px;letter-spacing:2px}.chapter-heading h3{font-size:18px;letter-spacing:1px;margin-top:7px}.chapter-heading:after{font-size:16px;margin-top:9px}.chapter-photos{gap:17px 12px}.album-dialog .chapter-photos .album-photo{padding:6px 6px 9px}.album-dialog .chapter-photos .album-photo:nth-child(even){margin-top:18px}.album-dialog .chapter-photos .album-photo:last-child:nth-child(odd){width:78%;margin-top:5px}.album-dialog .chapter-photos .album-photo-number{left:13px;top:12px;font-size:9px}.album-dialog .chapter-photos .album-photo p{font-size:10px;margin-top:8px}.story-ending{padding-top:32px}.story-ending p{font-size:12px;letter-spacing:.5px}.story-ending small{font-size:13px}}
+@media(max-width:350px){.memories-view .memory-heading h1{font-size:28px}.memories-view .trip-info .trip-letter-line{font-size:10px}.memories-view .trip-category{font-size:9px}.letter-arrival{padding-left:16px;padding-right:16px}.letter-message h3{font-size:22px}}
+@media(prefers-reduced-motion:reduce){.letter-postcard,.letter-seal,.album-dialog .chapter-photos .album-photo{transition:none}}
+.album-dialog{height:660px}
+.album-dialog.letter-expanded{height:calc(100dvh - 56px)}
+@media(max-width:600px){.album-dialog{height:760px}.album-dialog.letter-expanded{height:calc(100dvh - 28px)}}
+
+.ambient-toggle{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:37px;height:37px;padding:0 11px;border:1px solid #d9c3b2;border-radius:22px;background:#fffaf2;color:#aa8071;flex-shrink:0;cursor:pointer;transition:background .2s,border-color .2s}
+.ambient-toggle:hover{background:#f3e5d6;border-color:#c7a993}
+.ambient-toggle:focus-visible{outline:2px solid #bc8c7b;outline-offset:3px}
+.ambient-label{font-size:10px;letter-spacing:.4px;white-space:nowrap}
+.ambient-bars{height:17px;width:17px;display:flex;align-items:center;justify-content:center;gap:3px}
+.ambient-bars i{display:block;width:2px;height:7px;background:currentColor;border-radius:2px;transform-origin:center}
+.ambient-bars i:nth-child(2){height:15px}
+.ambient-bars i:nth-child(3){height:10px}
+.ambient-toggle[data-state=playing]{background:#efe6d9;color:#987262;border-color:#c7b59e}
+.ambient-toggle[data-state=playing] .ambient-bars i{animation:ambientPulse .95s ease-in-out infinite alternate}
+.ambient-toggle[data-state=playing] .ambient-bars i:nth-child(2){animation-delay:-.45s}
+.ambient-toggle[data-state=playing] .ambient-bars i:nth-child(3){animation-delay:-.7s}
+.ambient-toggle[data-state=paused] .ambient-bars{opacity:.55}
+.album-header-actions{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.album-header-actions .ambient-toggle{width:37px;padding:0}
+.album-dialog .album-header .album-header-actions .icon-button{margin:0}
+.ambient-on-dark{background:#ffffff08;border-color:#cfb9974a;color:#cdb79a;margin-right:3px}
+.ambient-on-dark:hover,.ambient-on-dark[data-state=playing]{background:#d7c4a41c;border-color:#d0b48b80;color:#e3c9a4}
+@keyframes ambientPulse{from{transform:scaleY(.4)}to{transform:scaleY(1)}}
+@media(max-width:600px){.header-actions>.ambient-toggle{height:34px;min-width:34px;width:34px;padding:0}.header-actions>.ambient-toggle .ambient-label{display:none}.album-header-actions{gap:6px}.album-header-actions .ambient-toggle{height:32px;min-width:32px;width:32px}.ambient-on-dark{min-width:34px;width:34px;height:34px;padding:0;margin:0}}
+@media(max-width:350px){.header-actions>.ambient-toggle{width:30px;min-width:30px;height:31px}.header-actions{gap:5px}}
+@media(prefers-reduced-motion:reduce){.ambient-toggle,.ambient-bars i{animation:none!important;transition:none!important}}
+
+.travel-lock{width:min(440px,calc(100vw - 32px));border:1px solid #ddcbbb;border-radius:24px;padding:36px;background:#fffaf2;color:#624c40}.travel-lock::backdrop{background:#4b342b88;backdrop-filter:blur(7px)}.travel-lock>p{font-size:13px;line-height:1.9;color:#947d6e}.travel-lock label{display:block;margin:22px 0 8px;font-size:13px}.travel-lock input{width:100%;min-height:48px;border:1px solid #d9c7b6;border-radius:10px;padding:12px;font-size:16px;background:#fffdf8}.travel-lock .primary{width:100%;justify-content:center}.travel-lock #travel-lock-error{min-height:24px;color:#a34d45;font-size:12px;line-height:1.7}.travel-lock button:disabled{opacity:.6}
+
+.memory-reading-modes{display:flex;gap:5px;width:fit-content;padding:5px;background:#eee2d7;border:1px solid #e2cfc0;border-radius:30px;margin:8px 0 25px}.memory-reading-modes button{border:0;border-radius:24px;background:transparent;color:#907669;font-size:13px;padding:10px 23px;cursor:pointer;min-height:42px}.memory-reading-modes button[aria-pressed=true]{background:#fffbf4;color:#745348;box-shadow:0 2px 7px #74534815}.memory-reading-modes button:focus-visible,.timeline-card:focus-visible{outline:2px solid #b28073;outline-offset:4px}
+.timeline-view[hidden],.memories-view .trip-grid[hidden],.album-load-more[hidden]{display:none!important}.timeline-view{padding:8px 0 24px}.timeline-intro{text-align:center;padding:22px 12px 42px}.timeline-intro>p{font:9px/2 Georgia,serif;letter-spacing:3px;color:#b0927e}.timeline-intro h2{font:400 28px/1.8 "Noto Serif SC","Songti SC",SimSun,serif;color:#805e54;margin:12px 0}.timeline-intro>span{font-size:12px;line-height:2;color:#a28b7c}.timeline-dated{position:relative;max-width:780px;margin:auto;padding:0 0 8px 72px}.timeline-dated:before{content:"";position:absolute;top:25px;bottom:24px;left:31px;width:1px;background:linear-gradient(#d2ae9d,#dcc5b6 85%,transparent)}.timeline-year{position:relative;font:italic 27px/1.4 Georgia,serif;color:#a17a69;letter-spacing:1px;margin:0 0 20px -71px;width:64px;background:#faf3ed;padding:8px 0;z-index:1}.timeline-node{position:relative;margin:0 0 30px}.timeline-node:before{content:"";position:absolute;left:-46px;top:28px;width:10px;height:10px;border-radius:50%;background:#bc8b7b;box-shadow:0 0 0 6px #f5e9de;border:1px solid #fffcf5}.timeline-card{display:flex;align-items:center;gap:27px;width:100%;padding:24px;text-align:left;border:1px solid #e4d2c3;border-radius:6px;background:#fffaf3;box-shadow:0 5px 19px #8c63450a;color:#775e50;cursor:pointer;transition:transform .25s,box-shadow .25s}.timeline-card:hover{transform:translateY(-3px);box-shadow:0 9px 24px #8c634517}.timeline-print{width:125px;flex:0 0 125px;padding:6px 6px 20px;background:#fffefa;border:1px solid #e6d5c5;box-shadow:0 3px 8px #7c594314;transform:rotate(-3deg)}.timeline-print img{display:block;width:100%;height:135px;object-fit:cover;border-radius:1px}.timeline-copy{min-width:0;flex:1}.timeline-date{display:block;color:#b08a77;font:12px/1.7 Georgia,serif;letter-spacing:1.5px}.timeline-copy h3,.timeline-origin h3{font:400 25px/1.6 "Noto Serif SC","Songti SC",SimSun,serif;color:#805d51;margin:10px 0}.timeline-copy>p,.timeline-origin>p{font-size:12px;line-height:1.9;color:#a08a7b;white-space:pre-line}.timeline-date-source{display:block;font:10px/1.8 "Microsoft YaHei",sans-serif;color:#b4a092;letter-spacing:0}.timeline-count{display:block;font-size:10px;line-height:1.8;letter-spacing:.6px;color:#ab7d70;margin-top:15px}.timeline-origin{padding:22px 27px 25px;background:linear-gradient(110deg,#f2e5d9,#faf3ed);border:1px solid #e2cbbb;border-radius:6px}.timeline-origin h3:after{content:" ♡";color:#c09283}.timeline-undated-section{max-width:780px;margin:12px auto 0;padding-top:30px;border-top:1px dashed #dbc3b2}.undated-label{font:400 22px/1.8 "Noto Serif SC","Songti SC",SimSun,serif;color:#927063;margin:0}.undated-note{font-size:12px;line-height:1.9;color:#af9685;margin:8px 0 25px}.timeline-undated{display:grid;gap:19px}.timeline-undated .timeline-card{background:#fffaf29c}.timeline-undated .timeline-print{width:105px;flex-basis:105px}.timeline-undated .timeline-print img{height:105px}.album-load-more{display:block;margin:28px auto 0;border:1px solid #d5b9a3;border-radius:30px;background:#f5e7d8;color:#997465;min-height:48px;padding:12px 24px;font-size:12px;cursor:pointer;line-height:1.7}.album-load-more:hover{background:#ead3c0}
+@media(max-width:600px){.memory-reading-modes{margin-top:0;margin-bottom:22px}.memory-reading-modes button{font-size:12px;padding:9px 19px}.timeline-intro{padding:12px 0 28px}.timeline-intro h2{font-size:23px}.timeline-intro>span{font-size:11px}.timeline-dated{padding-left:30px}.timeline-dated:before{left:8px}.timeline-year{font-size:22px;margin-left:-29px;width:60px;margin-bottom:13px}.timeline-node{margin-bottom:23px}.timeline-node:before{left:-26px;width:8px;height:8px;top:23px;box-shadow:0 0 0 4px #f5e9de}.timeline-card{padding:15px 12px;gap:16px;align-items:flex-start}.timeline-print{width:84px;flex-basis:84px;padding:4px 4px 14px;margin-top:6px}.timeline-print img{height:102px}.timeline-copy h3,.timeline-origin h3{font-size:20px;line-height:1.6;margin:7px 0}.timeline-copy>p,.timeline-origin>p{font-size:11px}.timeline-date{font-size:10px;letter-spacing:.7px}.timeline-date-source{font-size:9px}.timeline-count{font-size:9px;letter-spacing:0;margin-top:10px}.timeline-origin{padding:18px}.timeline-undated-section{padding-top:24px}.undated-label{font-size:20px}.undated-note{font-size:11px}.timeline-undated .timeline-print{width:80px;flex-basis:80px}.timeline-undated .timeline-print img{height:90px}}
+@media(prefers-reduced-motion:reduce){.timeline-card{transition:none}}
+
+.timeline-anniversary{max-width:780px;margin:0 auto 28px}.timeline-periods{max-width:780px;margin:0 auto 36px;padding:26px;border:1px dashed #cbbb9f;border-radius:8px;background:#eeeedd55}.timeline-periods .timeline-card{background:#fffdf4;border-color:#ded7bf}.timeline-periods .timeline-date{color:#8c8e65}.timeline-journey-heading{max-width:780px;margin:0 auto 25px}.timeline-journey-heading h3{font:400 23px/1.8 "Noto Serif SC","Songti SC",SimSun,serif;color:#927063;margin:0}.timeline-journey-heading p{font-size:12px;line-height:1.9;color:#af9685;margin:8px 0 0}@media(max-width:600px){.timeline-periods{padding:17px 13px;margin-bottom:28px}.timeline-anniversary{margin-bottom:22px}.timeline-journey-heading h3{font-size:20px}.timeline-journey-heading p{font-size:11px}}
+
+.music-credit{font-size:10px;line-height:1.8;color:#806657;text-align:center;margin:14px 0 2px}.music-credit a{color:inherit;text-decoration:none;border-bottom:1px dotted #bba391;padding-bottom:2px}.music-credit a:hover{color:#654a40}.music-credit a:focus-visible{outline:2px solid #b58373;outline-offset:4px}.home-actions .music-credit{margin-top:13px;font-size:10px}
+
+/* Stable photo frames: reserved ratio, cover crop, no collapsed bars. */
+.memories-view .trip-visual{grid-template-rows:minmax(0,1fr)}
+.memories-view .trip-cover,.memories-view .trip-peeks{height:100%;min-height:0;overflow:hidden}
+.trip-peek{position:relative;display:block;height:100%;min-height:0;overflow:hidden}
+.memories-view .trip-cover img,.memories-view .trip-peek img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;background:#eae4d6}
+.memory-print img,.timeline-print img,.timeline-undated .timeline-print img,.letter-postcard>img{display:block;width:100%;height:auto;max-height:none;object-fit:cover;object-position:center;background:#eae6d9}
+.memory-print img{aspect-ratio:1/1}
+.timeline-print img,.timeline-undated .timeline-print img,.letter-postcard>img{aspect-ratio:4/5}
+.album-dialog .album-photo img,.album-dialog .chapter-photos .album-photo img{display:block;width:100%;height:auto;max-height:none;min-height:160px;aspect-ratio:4/3;object-fit:cover;object-position:center;background:#eae6d9}
+.photo-thumbnail{overflow:hidden}
+.photo-thumbnail img{width:100%;height:100%;aspect-ratio:1/1;object-fit:cover;background:#eae6d9}
+img.photo-error{object-fit:contain}
+body[data-view=memories]{padding-bottom:calc(128px + env(safe-area-inset-bottom, 0px))}
+body[data-view=memories] .dock{bottom:calc(16px + env(safe-area-inset-bottom, 0px))}

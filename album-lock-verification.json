@@ -1,0 +1,19 @@
+[
+  {
+    "host": "liuyangdev.site",
+    "lock_login_photos_readonly_logout": "passed"
+  },
+  {
+    "host": "www.liuyangdev.site",
+    "lock_login_photos_readonly_logout": "passed"
+  },
+  {
+    "host": "test.liuyangdev.site",
+    "lock_login_photos_readonly_logout": "passed",
+    "rechecked_after_deployment_propagation": true
+  },
+  {
+    "host": "our-story-liuyang-2026.pages.dev",
+    "lock_login_photos_readonly_logout": "passed"
+  }
+]

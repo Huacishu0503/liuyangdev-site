@@ -1,0 +1,20 @@
+{
+  "url": "https://test.liuyangdev.site",
+  "published_albums": 10,
+  "published_photos": 1291,
+  "production_dns_changed": false,
+  "dns_diagnostic_override_used": false,
+  "public_snapshots_match": true,
+  "assets_checked": 0,
+  "quick_gateway_check": true,
+  "checksums_sampled": 25,
+  "private_paths_not_published": true,
+  "existing_password_login": true,
+  "upload_publish_delete_workflow": true,
+  "original_public_albums_unchanged_after_test": true,
+  "desktop_direct_access": true,
+  "phone_network_test_pending": false,
+  "phone_photos_and_bgm_confirmed_by_owner": true,
+  "production_root_www_nameservers_dnssec_unchanged": true,
+  "custom_domain_certificate_active": true
+}

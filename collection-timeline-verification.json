@@ -1,0 +1,21 @@
+{
+  "production_url": "https://liuyangdev.site/#memories",
+  "source_albums": 10,
+  "reader_collections": 4,
+  "photos": 1291,
+  "group_counts": [
+    539,
+    393,
+    261,
+    98
+  ],
+  "dated_trip": "2025-10-02",
+  "dated_trip_source": "existing album title",
+  "undated_collections": 3,
+  "first_batch": 36,
+  "second_batch": 72,
+  "lightbox_last_photo_loaded": true,
+  "mobile_horizontal_overflow": false,
+  "password_layers_preserved": true,
+  "collection_unit_tests_passed": 2
+}

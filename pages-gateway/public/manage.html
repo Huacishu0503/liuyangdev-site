@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#fff7e7"><meta name="robots" content="noindex,nofollow"><title>照片管理 · 我们的小窝</title><link rel="icon" href="/favicon.ico" type="image/svg+xml"><link rel="icon" href="assets/heart.svg" type="image/svg+xml"><link rel="stylesheet" href="manage.css?v=7"><script src="manage.js?v=period-9" defer></script></head>
+<body>
+<header class="manager-header"><a href="index.html#home" class="brand">♡ 我们的小窝 <span>照片管理</span></a><div><a class="small-button" href="index.html#memories" target="_blank" rel="noopener">查看相册 ↗</a><button id="logout" class="text-button" hidden>退出管理</button></div></header>
+<main>
+<section id="login-panel" class="login-panel"><img src="assets/puppy-maltese-v6.webp" alt="小金毛和白色马尔济斯" width="260" height="174"><p class="little-label">把我们的照片，装进小窝里。</p><h1>欢迎回来 ♡</h1><p class="muted">输入管理密码，就能上传和整理照片。</p><form id="login-form"><label>管理密码<input id="password" type="password" autocomplete="current-password" required maxlength="200" placeholder="请输入管理密码"></label><button class="primary" id="login-button" type="submit">打开照片小仓库 →</button><p id="login-error" class="error" role="alert"></p></form></section>
+<section id="workspace" hidden>
+<div class="welcome"><div><p class="little-label">一点一点，收藏我们。</p><h1>我们的照片小仓库</h1></div><button id="new-trip" class="primary compact">＋ 新建一段旅行</button></div>
+<div class="manager-layout">
+<aside class="trip-sidebar"><h2>旅行清单</h2><div id="trip-list"></div><p id="list-empty" class="muted">还没有旅行，先新建一段吧。</p></aside>
+<section id="editor-empty" class="editor-empty"><span>✿</span><h2>第一段回忆，从这里开始。</h2><p>点“新建一段旅行”，写地点、选照片，再发布。</p><button id="first-trip" class="primary compact">新建旅行 →</button></section>
+<section id="editor" class="editor" hidden>
+<div class="editor-heading"><h2 id="editor-title">整理这段旅行</h2><span id="draft-status" class="status-tag">草稿</span></div>
+<form id="trip-form"><div class="form-grid"><label>地点 <span>必填</span><input id="place" maxlength="40" required placeholder="例如：大理"></label><label>分类 <span>必填</span><input id="category" list="category-options" maxlength="30" required placeholder="例如：海边"><datalist id="category-options"><option value="海边"><option value="山间"><option value="城市"><option value="日常"><option value="旅行"></datalist></label><label>这一站的标题 <span>必填</span><input id="title" maxlength="80" required placeholder="例如：把喜欢写进海风里"></label><label>旅行日期 <span>可留空</span><input id="trip-date" type="text" maxlength="20" placeholder="日期、月份、年份范围或国庆"></label></div><label>写几句话 <span>可留空</span><textarea id="description" rows="3" maxlength="1000" placeholder="记下那天最想留下的小事。"></textarea></label></form>
+<div class="photo-section-heading"><div><h3>这一站的照片</h3><p class="muted">第一张会作为封面。照片会自动压缩并移除定位等附加信息。</p></div><label class="choose-button" for="photo-input">＋ 选照片<input id="photo-input" type="file" accept="image/jpeg,image/png,image/webp" multiple></label></div>
+<div id="drop-zone" class="drop-zone" tabindex="0" role="button" aria-label="选择要上传的照片"><span>▧</span><p>点击这里选照片，也可以拖进来</p><small>支持 JPEG、PNG、WebP；一次可以选多张</small></div>
+<p id="upload-progress" class="upload-progress" role="status" hidden></p>
+<div id="photo-list" class="photo-list"></div>
+<div class="save-bar"><div><p id="save-note">照片先存为草稿，点“保存并发布”后双方才能看到。</p><p id="editor-error" class="error" role="alert"></p></div><div class="save-actions"><button id="save-draft" class="small-button">保存草稿</button><button id="publish" class="primary compact">保存并发布 ♡</button></div></div>
+<div class="secondary-actions"><button id="unpublish" class="text-button" hidden>从相册撤下，保留草稿</button><button id="archive-trip" class="text-button danger">收起这段草稿</button></div>
+</section>
+</div></section>
+</main>
+<dialog id="new-dialog"><button id="close-new" class="close-button" aria-label="关闭新建旅行">×</button><p class="little-label">OUR NEXT MEMORY</p><h2>新建一段旅行</h2><form id="new-form"><label>想记录哪个地方？<input id="new-place" maxlength="40" required placeholder="写下真实的地点"></label><button class="primary" type="submit">开始收藏照片 →</button><p id="new-error" class="error" role="alert"></p></form></dialog>
+<dialog id="confirm-dialog"><h2 id="confirm-title">确认操作</h2><p id="confirm-copy"></p><div class="confirm-actions"><button id="confirm-cancel" class="small-button">取消</button><button id="confirm-ok" class="primary compact">确认</button></div></dialog>
+<div id="notice" class="notice" role="status" hidden></div>
+</body></html>

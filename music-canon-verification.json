@@ -1,0 +1,17 @@
+{
+  "track": "Canon in D",
+  "performer": "Lee Galloway",
+  "duration_seconds": 171.075918,
+  "mp3_sha256": "4606553d10a252be18e0a6d6caee55956140c4f0714839edf175ddf91fbeb375",
+  "file_integrity_verified": true,
+  "range_status": 200,
+  "range_bytes": 3422749,
+  "login_protection_preserved": true,
+  "browser_playing_verified": true,
+  "browser_duration_seconds": 171.075918,
+  "browser_pause_verified": true,
+  "browser_resume_verified": true,
+  "browser_loop_enabled": true,
+  "browser_decode_error": null,
+  "full_file_decode_passed": true
+}
